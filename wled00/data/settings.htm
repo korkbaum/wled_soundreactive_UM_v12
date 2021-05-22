@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8">
+	<title>WLED Settings</title>
+	<style>
+		body {
+			text-align: center;
+			background: #222;
+			height: 100px;
+			margin: 0;
+		}
+		html {
+			--h: 11.55vh;
+		}
+		button {
+			background: #333;
+			color: #fff;
+			font: 400 25px Arial;
+			border: 0px solid white;
+			border-radius: 20px;
+			display: inline-block;
+			height: 50px;
+			width: 280px;
+			margin: 8px auto;
+		}
+		.btn:hover {
+			background: #444;
+			background-color: #555;
+			color: #eee;
+		}
+		.outer {				/*https://stackoverflow.com/questions/396145/how-to-vertically-center-a-div-element-for-all-browsers-using-css*/
+			display: table;
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+		}
+		.middle {
+			display: table-cell;
+			vertical-align: middle;
+		}
+		.inner {
+			margin-left: auto;
+			margin-right: auto;
+			width: 400px;
+		}
+	</style>
+	<script>
+	function BB()
+	{
+		if (window.frameElement) {
+			document.getElementById("b").style.display = "none";
+			document.documentElement.style.setProperty('--h',"13.86vh");
+		}
+	}
+	</script>
+</head>
+<body onload="BB()">
+<form action="/"><button class="btn" type=submit id="b">Back</button><br><br></form>
+<form action="/settings/wifi"><button class="btn" type="submit">WiFi Setup</button><br></form>
+<form action="/settings/leds"><button class="btn" type="submit">LED Preferences</button><br></form>
+<form action="/settings/sound"><button class="btn" type="submit">Sound Settings</button><br></form>
+<form action="/settings/ui"><button class="btn" type="submit">User Interface</button><br></form>
+<form action="/settings/sync"><button class="btn" type="submit">Sync Interfaces</button><br></form>
+<form action="/settings/time"><button class="btn" type="submit">Time & Macros</button><br></form>
+<form action="/settings/um"><button class="btn" type="submit">Usermods</button><br></form>
+<form action="/settings/sec"><button class="btn" type="submit">Security & Updates</button><br></form>
+</body>
+</html>
