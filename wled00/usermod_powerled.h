@@ -5,7 +5,7 @@
 #ifdef ESP32		//won't run on ESP8266
 
 #define PWR_LED_PIN 17     //Hardware pin to attach mosfet gate for power led control 
-#define threshold 60       //KK: MagicReel: 12,  CubeBall: 9 
+#define threshold 12       //KK: MagicReel: 12,  CubeBall: 9, def 60 
 #define touchPin T3
 
 //this is to run analogwrite style pwm dimming on esp32
@@ -73,13 +73,13 @@ class usermod_powerled : public Usermod {
           if(touchDuration >= 500 && released) {                   //800 Toggle power if button press is longer than 800ms
             touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
             toggleOnOff();                                    
-            Serial.println("toggle");
+            //Serial.println("toggle");
           } 
           else if (touchDuration >= 100 && released) {              //100 Switch to next brightness if touch is between 100 and 800ms
             touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
             PWRon = !PWRon;
             PWRtoggleOnOff();
-            Serial.println("PWRtoggle");
+            //Serial.println("PWRtoggle");
           }
         }
 		
