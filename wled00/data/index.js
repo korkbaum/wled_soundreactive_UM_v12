@@ -1004,7 +1004,7 @@ function requestJson(command, rinfo = true, verbose = true) {
 				
 				var y = '<option value="0">Default</option>';
 				json.palettes.shift(); //remove default
-				for (let i = 0; i < json.palettes.length; i++) json.palettes[i] = {"id": parseInt(i)+1, "name":json.palettes[i]};
+				for (let i = 0; i < json.palettes.length; i++) json.palettes[i] = {id: parseInt(i)+1, name:json.palettes[i]};
 				json.palettes.sort(compare);
 				for (let i = 0; i < json.palettes.length; i++) {
 					if (palJson[json.palettes[i].id] == "true") {
@@ -1049,7 +1049,7 @@ function requestJson(command, rinfo = true, verbose = true) {
 			if (!handleJson(s)) {
 				showToast('No Segments!', true);
 				updateUI(false);
-			//	if (callback) callback();
+				if (callback) callback();
 				return;
 			}
 	
@@ -1077,9 +1077,10 @@ function handleJson(s) {
 
 	isOn = s.on;
 	PWRisOn = s.PWRon;		//Power Led mod
+	d.getElementById('buttonPower').value = s.on;	//Power Led mod
+	d.getElementById('PWRbuttonPower').value = s.PWRisOn;
 	d.getElementById('sliderBri').value = s.bri;
 	d.getElementById('sliderPWRBri').value = s.PWRbri;	//Power Led mod
-	
 	//nlA = s.nl.on;
 	//nlDur = s.nl.dur;
 	//nlTar = s.nl.tbri;
@@ -1153,7 +1154,8 @@ function handleJson(s) {
 		else document.getElementById("ffteffects").style.display = 'none';
 	}
 	
-	//selectedPal = i.pal;
+	d.getElementById("selectPalette").value = i.pal;
+
 	displayRover(lastinfo, s);
 	return true;
 }
