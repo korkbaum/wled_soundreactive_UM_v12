@@ -431,7 +431,7 @@ function populateQL() {
 		var it = 0;
 		for (var key of (pQL||[])) {
 			cn += `<button class="xxs btn psts" id="p${key[0]}qlb" onclick="setPreset(${key[0]});">${key[1]}</button>`;
-			cn2 += `<button class="xxs btn psts" id="p${key[0]}qlb" onclick="setPreset(${key[0]});">${key[1]}</button>`;
+			cn2 += `<button class="xxs btn psts" id="p${key[0]}qlb" name="prebut" onclick="setPreset(${key[0]});">${key[1]}</button>`;
 			it++;
 			if (it >= 5) {		//UI mod, was >4
 				it = 0;
@@ -453,22 +453,22 @@ function populatePresets(fromls) {
 	var arr = Object.entries(pJson);
 	arr.sort(cmpP);
 	var added = false;
-  pQL = [];
-  var is = [];
+  	pQL = [];
+  	var is = [];
 
 	for (var key of (arr||[])) {
 		if (!isObject(key[1])) continue;
 		let i = parseInt(key[0]);
 		var qll = key[1].ql;
-    if (qll) pQL.push([i, qll]);
-    is.push(i);
+		if (qll) pQL.push([i, qll]);
+		is.push(i);
 
-    cn += `<div class="seg pres" id="p${i}o">`;
-    if (cfg.comp.pid) cn += `<div class="pid">${i}</div>`;
-    cn += `<div class="segname pname" onclick="setPreset(${i})">${pName(i)}</div>
-			<i class="icons e-icon flr ${expanded[i+100] ? "exp":""}" id="sege${i+100}" onclick="expand(${i+100})">&#xe395;</i>
-			<div class="segin" id="seg${i+100}"></div>
-		</div><br>`;
+		cn += `<div class="seg pres" id="p${i}o">`;
+		if (cfg.comp.pid) cn += `<div class="pid">${i}</div>`;
+		cn += `<div class="segname pname" onclick="setPreset(${i})">${pName(i)}</div>
+				<i class="icons e-icon flr ${expanded[i+100] ? "exp":""}" id="sege${i+100}" onclick="expand(${i+100})">&#xe395;</i>
+				<div class="segin" id="seg${i+100}"></div>
+			</div><br>`;
 		added = true;
 	}
 
@@ -870,15 +870,16 @@ function updateLen(s) {
 	d.getElementById(`seg${s}len`).innerHTML = out;
 }
 
-function updatePA() {
+function updatePA() {							//KK: in zwei Funktionen aufteilen
 	var ps = d.getElementsByClassName("seg");
 	for (let i = 0; i < ps.length; i++) {
 		ps[i].style.backgroundColor = "var(--c-2)";
 	}
 	ps = d.getElementsByClassName("psts");
-	for (let i = 0; i < ps.length; i++) {
-	//	ps[i].style.backgroundColor = "var(--c-2)";	//deleted because it avoids hover highlighting
-	}
+	
+	/*for (let i = 0; i < ps.length; i++) {
+		ps[i].style.backgroundColor = "var(--c-2)";	//deleted because it avoids hover highlighting
+	}*/
 	if (currentPreset > 0) {
 		var acv = d.getElementById(`p${currentPreset}o`);
 		if (acv && !expanded[currentPreset+100])
@@ -888,15 +889,26 @@ function updatePA() {
 	}
 }
 
+function updatePresets() {							//KK: in zwei Funktionen aufteilen
+	if (currentPreset < 0) {			// no preset active/chosen
+		var TextElements = document.getElementsByName("prebut");
+		for (var i = 0, max = TextElements.length; i < max; i++) {
+			TextElements[i].style.backgroundColor = "#333";
+			TextElements[i].style.color = "Gray";
+		}
+	}
+}
+
+
 function updateUI() {
 	d.getElementById('buttonPower').className = (isOn) ? "active":"";
-	d.getElementById('PWRbuttonPower').className = (PWRisOn) ? "active":"";		// Power Led mod
-	//d.getElementById('buttonNl').className = (nlA) ? "active":"";				//UI mod
+	d.getElementById('PWRbuttonPower').className = (PWRisOn) ? "active":"";	
+	//d.getElementById('buttonNl').className = (nlA) ? "active":"";	
 	d.getElementById('buttonSync').className = (syncSend) ? "active":"";
 
-	//d.getElementById('fxb' + selectedFx).style.backgroundColor = "var(--c-6)";		//UI mod 
+	//d.getElementById('fxb' + selectedFx).style.backgroundColor = "var(--c-6)";
 	updateTrail(d.getElementById('sliderBri'));
-	updateTrail(d.getElementById('sliderPWRBri'));			// Power Led mod
+	updateTrail(d.getElementById('sliderPWRBri'));
 	updateTrail(d.getElementById('sliderSpeed'));
 	updateTrail(d.getElementById('sliderIntensity'));
 	updateTrail(d.getElementById('sliderFFT1'));
@@ -904,10 +916,11 @@ function updateUI() {
 	updateTrail(d.getElementById('sliderFFT3'));
 	updateTrail(d.getElementById('sliderW'));
 	if (isRgbw) d.getElementById('wwrap').style.display = "block";
-	d.getElementById('fxlist').value = selectedFx;		//UI mod 
+	d.getElementById('fxlist').value = selectedFx;
 
 	var spal = d.getElementById("selectPalette");
 	updatePA();
+	updatePresets();
 	updateHex();
 	updateRgb();
 }
@@ -945,8 +958,8 @@ function requestJson(command, rinfo = true, verbose = true) {
 	var type = command ? 'post':'get';
 
 	if (command) {
-    command.v = verbose;
-    command.time = Math.floor(Date.now() / 1000);
+    	command.v = verbose;
+    	command.time = Math.floor(Date.now() / 1000);
 		req = JSON.stringify(command);
 	}
 	fetch
@@ -992,10 +1005,8 @@ function requestJson(command, rinfo = true, verbose = true) {
 				json.effects.shift(); //remove solid 
 				for (let i = 0; i < json.effects.length; i++) json.effects[i] = {id: parseInt(i)+1, name:json.effects[i]};
 				json.effects.sort(compare);
-				
 				for (let i = 0; i < json.effects.length; i++) {
 					Fx_IDs_Names.push([json.effects[i].id, json.effects[i].name]);		// keep effect ids+names list in global variable for rendering fx controls visible/invisible
-					
 					if (fxJson[json.effects[i].id] == "true") {
 						x += `<option value="${json.effects[i].id}">${json.effects[i].name}</option>`;
 					}
@@ -1123,7 +1134,6 @@ function handleJson(s) {
 		selectSlot(csel);
 	}
 	d.getElementById('sliderSpeed').value = whites[csel];
-
 	d.getElementById('sliderSpeed').value = i.sx;
 	d.getElementById('sliderIntensity').value = i.ix;
 	d.getElementById('sliderFFT1').value = i.f1x;
@@ -1143,12 +1153,12 @@ function handleJson(s) {
 
 	if (i.fx == 0) {		// Solid Color chosen, not FX. De-activate FX elements (Palettes, Speed etc).
 							// Leave fx button text untouched (i.e. don't update to "Solid Color") to easily go back to effect chosen before
-		document.getElementById("fxlist").style.color = "Gray";
-		document.getElementById("effects").style.display = 'none';
+		d.getElementById("fxlist").style.color = "Gray";
+		d.getElementById("effects").style.display = 'none';
 	} else {			 	// FX chosen, not Solid Color
 		selectedFx = i.fx; 
-		document.getElementById("fxlist").style.color = "White";	//change button text to white if FX is active
-		document.getElementById("effects").style.display = 'block';
+		d.getElementById("fxlist").style.color = "White";	//change button text to white if FX is active
+		d.getElementById("effects").style.display = 'block';
 
 		if (fft_flag) document.getElementById("ffteffects").style.display = 'block';		// check if sound reactive effext is chosen, only then show fft controls
 		else document.getElementById("ffteffects").style.display = 'none';
@@ -1382,11 +1392,15 @@ function setSegBri(s){
 function setX(ind) {
 	var obj = {"seg": {"fx": parseInt(ind)}};
 	requestJson(obj);
+	currentPreset = -1;		//un-highlight preset button
+	updatePresets();
 }
 
 function setEffect() {
 	var obj = {"seg": {"fx": parseInt(d.getElementById('fxlist').value)}};
 	requestJson(obj);
+	currentPreset = -1;		//un-highlight preset button
+	updatePresets();updatePresets();
 }
 
 function setPalette() {
@@ -1451,7 +1465,16 @@ function setPreset(i) {
 	var obj = {"ps": i};
 
 	showToast("Loading preset " + pName(i) +" (" + i + ")");
-
+	//console.log("i: ", i);
+	for (var j = 1; j < getLowestUnusedP(); j++) {
+		if (j != i) { 
+			d.getElementById(`p${j}qlb`).style.backgroundColor = "#333";
+			d.getElementById(`p${j}qlb`).style.color = "Gray";
+		} else { 		// highlight only currrent preset
+			d.getElementById(`p${j}qlb`).style.backgroundColor = "#555";
+			d.getElementById(`p${j}qlb`).style.color = "White";
+		}
+	}
 	requestJson(obj);
 }
 
@@ -1740,11 +1763,11 @@ function expand(i,a) {
 		var p = i-100;
 		d.getElementById(`p${p}o`).style.background = (expanded[i] || p != currentPreset)?"var(--c-2)":"var(--c-6)";
 		if (d.getElementById('seg' +i).innerHTML == "") {
-      d.getElementById('seg' +i).innerHTML = makeP(p);
-      var papi = papiVal(p);
-      d.getElementById(`p${p}api`).value = papi;
-      if (papi.indexOf("Please") == 0) d.getElementById(`p${p}cstgl`).checked = true;
-      tglCs(p);
+			d.getElementById('seg' +i).innerHTML = makeP(p);
+			var papi = papiVal(p);
+			d.getElementById(`p${p}api`).value = papi;
+			if (papi.indexOf("Please") == 0) d.getElementById(`p${p}cstgl`).checked = true;
+			tglCs(p);
 		}
 	}
 }

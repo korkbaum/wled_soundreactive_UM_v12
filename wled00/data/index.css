@@ -266,8 +266,8 @@ button {
 }
 
 .active {
-	background-color: var(--c-6) !important;
-	color: var(--c-f);
+	background-color: var(--c-3) !important;
+	color: var(--c-b);
 }
 
 .container {
@@ -794,8 +794,8 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .psts {
-	background-color: var(--c-3);
-	color: var(--c-f);
+	/*background-color: var(--c-3);*/
+	/*color: var(--c-f);*/
 	cursor: pointer;
 	padding: 2px 0 0 0;
 	height: 40px;
