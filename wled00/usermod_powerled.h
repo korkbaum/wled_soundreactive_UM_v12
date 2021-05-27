@@ -5,7 +5,7 @@
 #ifdef ESP32		//won't run on ESP8266
 
 #define PWR_LED_PIN 17     //Hardware pin to attach mosfet gate for power led control 
-#define threshold 25       //KK: MagicReel: 12,  CubeBall: 9, def 60 
+#define threshold 12       //KK: MagicReel: 12,  CubeBall: 9, def 60 
 #define TOUCH_PIN T3
 
 //this is to run analogwrite style pwm dimming on esp32
@@ -138,18 +138,6 @@ class usermod_powerled : public Usermod {
   		JsonObject top = root["usermod_powerled"];
       PWRbri = top["PWRbri"] | userVar0;
   		PWRon  = top["PWRon"] | userVar1;
-    }
-
-    void addToJsonInfo(JsonObject& root){                 // I missed an easy access to the device IP at times
-      char ip[32];
-      IPAddress localIP = Network.localIP();
-      sprintf(ip, "%d.%d.%d.%d", localIP[0], localIP[1], localIP[2], localIP[3]);
-      
-      JsonObject user = root["u"];
-      if (user.isNull()) user = root.createNestedObject("u");
-
-      JsonArray IPArr = user.createNestedArray("IP");     //name
-      IPArr.add(ip);                                      //value
     }
     
     uint16_t getId(){

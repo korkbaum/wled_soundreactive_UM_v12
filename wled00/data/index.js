@@ -870,7 +870,7 @@ function updateLen(s) {
 	d.getElementById(`seg${s}len`).innerHTML = out;
 }
 
-function updatePA() {							//KK: in zwei Funktionen aufteilen
+function updatePA() {
 	var ps = d.getElementsByClassName("seg");
 	for (let i = 0; i < ps.length; i++) {
 		ps[i].style.backgroundColor = "var(--c-2)";
@@ -889,7 +889,7 @@ function updatePA() {							//KK: in zwei Funktionen aufteilen
 	}
 }
 
-function updatePresets() {							//KK: in zwei Funktionen aufteilen
+function updatePresets() {
 	if (currentPreset < 0) {			// no preset active/chosen
 		var TextElements = document.getElementsByName("prebut");
 		for (var i = 0, max = TextElements.length; i < max; i++) {
@@ -1400,7 +1400,7 @@ function setEffect() {
 	var obj = {"seg": {"fx": parseInt(d.getElementById('fxlist').value)}};
 	requestJson(obj);
 	currentPreset = -1;		//un-highlight preset button
-	updatePresets();updatePresets();
+	updatePresets();
 }
 
 function setPalette() {
@@ -1465,7 +1465,6 @@ function setPreset(i) {
 	var obj = {"ps": i};
 
 	showToast("Loading preset " + pName(i) +" (" + i + ")");
-	//console.log("i: ", i);
 	for (var j = 1; j < getLowestUnusedP(); j++) {
 		if (j != i) { 
 			d.getElementById(`p${j}qlb`).style.backgroundColor = "#333";
