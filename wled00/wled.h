@@ -288,7 +288,7 @@ WLED_GLOBAL bool skipFirstLed  _INIT(false);        // ignore first LED in strip
 WLED_GLOBAL byte briMultiplier _INIT(100);          // % of brightness to set (to limit power, if you set it to 50 and set bri to 255, actual brightness will be 127)
 
 WLED_GLOBAL bool fxsel_active[170] _INIT_N(({true}));      // selected effects active flag, number must be >= fxcount
-WLED_GLOBAL bool palsel_active[70] _INIT_N(({true}));      // selected palettes active flag, number must be >= palette count
+WLED_GLOBAL bool palsel_active[80] _INIT_N(({true}));      // selected palettes active flag, number must be >= palette count
 
 // User Interface CONFIG
 WLED_GLOBAL char serverDescription[33] _INIT("WLED-SoundReactive");  // Name of module

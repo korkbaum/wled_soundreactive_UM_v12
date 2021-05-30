@@ -445,21 +445,6 @@ bool deserializeConfig(JsonObject doc, bool fromFS) {
   JsonObject usermods_settings = doc["um"];
   if (!usermods_settings.isNull()) usermods.readFromConfig(usermods_settings);
 
-  //fx selection values
-  char indx[12];
-  for (int i = 1; i < strip.getModeCount(); i++) {
-    indx[0] = '\0';
-    sprintf(indx, "%s%d", "fxc", i);
-    CJSON(fxsel_active[i], doc[indx]);
-  }
-
-  //pal selection values
-  for (int i = 1; i < strip.getPaletteCount(); i++) {
-    indx[0] = '\0';  
-    sprintf(indx, "%s%d", "palc", i);
-    CJSON(palsel_active[i], doc[indx]);
-  }
-
   if (fromFS) return false;
   doReboot = doc[F("rb")] | doReboot;
   return (doc["sv"] | true);
@@ -639,21 +624,6 @@ void serializeConfig() {
   def[F("ps")] = bootPreset;
   def["on"] = turnOnAtBoot;
   def["bri"] = briS;
-
-  //fx selections
-  char indx[12];
-  for (int i = 1; i < strip.getModeCount(); i++) {
-    indx[0] = '\0';
-    sprintf(indx, "%s%d", "fxc", i);
-    doc[indx] = fxsel_active[i];
-  }
-
-  //pal selections
-  for (int i = 1; i < strip.getPaletteCount(); i++) {
-    indx[0] = '\0';  
-    sprintf(indx, "%s%d", "palc", i);
-    doc[indx] = palsel_active[i];
-  }
 
   //to be removed once preset cycles are presets
   if (saveCurrPresetCycConf) {

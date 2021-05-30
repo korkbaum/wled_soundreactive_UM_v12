@@ -10,7 +10,11 @@
  * \/ \/ \/
  */
 
-#ifdef USERMOD_ID_POWERLED							//added for usermod_powerled
+#ifdef USERMOD_ID_FXPAL_SELECTION
+#include "usermod_fxpal_selection.h"
+#endif
+
+#ifdef USERMOD_ID_POWERLED
 #include "usermod_powerled.h"
 #endif
 
@@ -75,7 +79,11 @@ void registerUsermods()
    */
   //usermods.add(new MyExampleUsermod());
   
-  #ifdef USERMOD_ID_POWERLED							//added for usermod_powerled
+  #ifdef USERMOD_ID_FXPAL_SELECTION
+  usermods.add(new usermod_fxpal_selection());
+  #endif
+
+  #ifdef USERMOD_ID_POWERLED
   usermods.add(new usermod_powerled());
   #endif
 

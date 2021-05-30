@@ -102,63 +102,63 @@
 		GetV();
 	}
 
-
+  
 	function generate_fx_pal(command) {
 
-		return new Promise(function (resolve, reject) {
-	
-			var e1 = d.getElementById('fxlist');
-			var e2 = d.getElementById('selectPalette');
+    return new Promise(function (resolve, reject) {
 
-			var url = '/json';
-			if (loc) {	url = `http://${locip}${url}`;	}
-			
-			var type = command ? 'post':'get';
-			if (command) {
-				command.time = Math.floor(Date.now() / 1000);
-				var req = JSON.stringify(command);
-			}
-			fetch
-			(url, {
-				method: type,
-				headers: {
-					"Content-type": "application/json; charset=UTF-8"
-				},
-				body: req
-			})
-			.then(res => {
-				if (!res.ok) {  console.log("rj2 !res.ok ");  }		//showErrorToast();
-				return res.json();
-			})
-			.then(json => {
-				var x='',y='';
-				json.effects.shift(); //remove solid
-				for (let i = 0; i < json.effects.length; i++) json.effects[i] = {id: parseInt(i)+1, name:json.effects[i]};
-				json.effects.sort(compare);
-				for (let i = 0; i < json.effects.length; i++) {
-					x += `<button type="button" class="button2" id="fxb${i}" onclick="setX(${json.effects[i].id});">${json.effects[i].name}</button>`;			 
-					x += `<input type="checkbox" name="fxc${json.effects[i].id}" checked><br>`;
-				}
-				e1.innerHTML = x; 
-				
-				json.palettes.shift(); //remove default
-				for (let i = 0; i < json.palettes.length; i++) json.palettes[i] = {"id": parseInt(i)+1, "name":json.palettes[i]};
-				json.palettes.sort(compare);
-				for (let i = 0; i < json.palettes.length; i++) {
-					y += `<button type="button" class="button2" id="pal${i}" onclick="setPalette(${json.palettes[i].id});">${json.palettes[i].name}</button>`;
-					y += `<input type="checkbox" name="palc${json.palettes[i].id}" checked><br>`;
-				}
-				e2.innerHTML = y;
+      var e1 = d.getElementById('fxlist');
+      var e2 = d.getElementById('selectPalette');
 
-				var result = y;
-				resolve(result);
-			})
-			.catch(function (error) {
-				console.log(error);
-				reject(error);
-			});
-		});
-	}
+      var url = '/json';
+      if (loc) {	url = `http://${locip}${url}`;	}
+      
+      var type = command ? 'post':'get';
+      if (command) {
+        command.time = Math.floor(Date.now() / 1000);
+        var req = JSON.stringify(command);
+      }
+      fetch
+      (url, {
+        method: type,
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        },
+        body: req
+      })
+      .then(res => {
+        if (!res.ok) {  console.log("rj2 !res.ok ");  }		//showErrorToast();
+        return res.json();
+      })
+      .then(json => {
+        var x='',y='';
+        json.effects.shift(); //remove solid
+        for (let i = 0; i < json.effects.length; i++) json.effects[i] = {id: parseInt(i)+1, name:json.effects[i]};
+        json.effects.sort(compare);
+        for (let i = 0; i < json.effects.length; i++) {
+          x += `<button type="button" class="button2" id="fxb${i}" onclick="setX(${json.effects[i].id});">${json.effects[i].name}</button>`;			 
+          x += `<input type="checkbox" name="fxc${json.effects[i].id}" checked><br>`;
+        }
+        e1.innerHTML = x; 
+        
+        json.palettes.shift(); //remove default
+        for (let i = 0; i < json.palettes.length; i++) json.palettes[i] = {"id": parseInt(i)+1, "name":json.palettes[i]};
+        json.palettes.sort(compare);
+        for (let i = 0; i < json.palettes.length; i++) {
+          y += `<button type="button" class="button2" id="pal${i}" onclick="setPalette(${json.palettes[i].id});">${json.palettes[i].name}</button>`;
+          y += `<input type="checkbox" name="palc${json.palettes[i].id}" checked><br>`;
+        }
+        e2.innerHTML = y;
+
+        var result = y;
+        resolve(result);
+      })
+      .catch(function (error) {
+        console.log(error);
+        reject(error);
+      });
+    });
+  }
 
 
 	//////////////////////

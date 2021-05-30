@@ -241,24 +241,35 @@ async function onLoad() {
 // Using Async/Await to make sure everything is ready before proceeding.
 async function load_fx_pal_jsons() {
 
-	var url = `/cfg.json`;
+	var url = `/json/cfg`;
 	if (loc) { url = `http://${locip}${url}`; }
 
     const response = await fetch(url);
     const data = await response.json();
 
-    var str = "";
+    var strfx = "";	var strpal = "";
 	var i = 1; j = 1;
-	for (const [key, value] of Object.entries(data)) {
-		str = key.substr(0,3);  
-		if (str == "fxc") {
-			fxJson[i] = `${value}`;
-			i++;
-		}
-		if (str == "pal") {
-			palJson[j] = `${value}`;
-			j++;
-		}
+	var obj = data;
+
+	for(var k in obj) {
+		if(obj[k] instanceof Object) {
+			if (k == "um") {		// usermods json values from cfg(.json)
+				var fxpalobj = obj["um"]["usermod_fxpal_selection"];
+			
+				for (const [key, value] of Object.entries(fxpalobj)) {
+					strfx = key.substr(0,3);
+					if (strfx == "fxc") {
+						fxJson[i] = `${value}`;
+						i++;
+					}
+					strpal = key.substr(0,4);
+					if (strpal == "palc") {
+						palJson[j] = `${value}`;
+						j++;
+					}
+				}
+			}
+		};
 	}
 }
 
@@ -414,13 +425,13 @@ function loadPresets() {
 	})
 	.catch(function (error) {
 		showToast(error, true);
-		console.log(error);
+		console.log(Date.now(), error);
 		presetError(false);
 	});
 }
 
 var pQL = [];
-var pQL2 = [];			//show quick load preset buttons also in main windows
+var pQL2 = [];			//show quick load preset buttons also in main window
 
 function populateQL() {
 	var cn = "";
@@ -497,17 +508,16 @@ function populateInfo(i) {
 	var pwru = "Not calculated";
 	if (pwr > 1000) {pwr /= 1000; pwr = pwr.toFixed((pwr > 10) ? 0 : 1); pwru = pwr + " A";}
 	else if (pwr > 0) {pwr = 50 * Math.round(pwr/50); pwru = pwr + " mA";}
-  var urows="";
-  if (i.u) {
-    for (const [k, val] of Object.entries(i.u))
-    {
-      if (val[1]) {
-        urows += inforow(k,val[0],val[1]);
-      } else {
-        urows += inforow(k,val);
-      }
-    }
-  }
+	var urows="";
+	if (i.u) {
+		for (const [k, val] of Object.entries(i.u))	{
+			if (val[1]) {
+				urows += inforow(k,val[0],val[1]);
+			} else {
+				urows += inforow(k,val);
+			}
+		}
+	}
 
 	var vcn = "Kuuhaku";
 	if (i.ver.startsWith("0.12.")) vcn = "Hikari";
@@ -675,7 +685,7 @@ function populatePalettes(palettes)
 	d.getElementById('selectPalette').innerHTML=html;
 }
 */
-
+/*
 function redrawPalPrev()
 {
 	let palettes = d.querySelectorAll('#selectPalette .lstI');
@@ -755,7 +765,7 @@ function generateListItemHtml(listName, id, name, clickAction, extraHtml = '', e
       ${extraHtml}
 		</div>`;
 }
-  
+ */ 
 function btype(b){
   switch (b) {
     case 32: return "ESP32";
@@ -815,7 +825,7 @@ function loadNodes()
 	})
 	.catch(function (error) {
 		showToast(error, true);
-		console.log(error);
+		console.log(Date.now(),error);
 	});
 }
 
@@ -901,6 +911,7 @@ function updatePresets() {
 
 
 function updateUI() {
+	console.log(Date.now(),"updateUI");
 	d.getElementById('buttonPower').className = (isOn) ? "active":"";
 	d.getElementById('PWRbuttonPower').className = (PWRisOn) ? "active":"";	
 	//d.getElementById('buttonNl').className = (nlA) ? "active":"";	
@@ -943,6 +954,7 @@ function cmpP(a, b) {
 
 var jsonTimeout;
 function requestJson(command, rinfo = true, verbose = true) {
+	console.log(Date.now(),"requestJson command rinfo", command, rinfo );
 	d.getElementById('connind').style.backgroundColor = "#a90";
 	lastUpdate = new Date();
 	if (!jsonTimeout) jsonTimeout = setTimeout(showErrorToast, 3000);
@@ -994,6 +1006,7 @@ function requestJson(command, rinfo = true, verbose = true) {
 			if (!rinfo) {
 				pmt = json.info.fs.pmt;
 				if (pmt != pmtLS || pmt == 0) {
+					console.log(Date.now(), "reqJson/loadPresets");
 					setTimeout(loadPresets,99);
 				}
 				else {
@@ -1079,11 +1092,12 @@ function requestJson(command, rinfo = true, verbose = true) {
 		})
 		.catch(function (error) {
 			showToast(error, true);
-			console.log(error);
+			console.log(Date.now(), error);
 		});
 }
 	
 function handleJson(s) {
+	console.log(Date.now(), "handleJson");
 	if (!s) return false;
 
 	isOn = s.on;
@@ -1343,7 +1357,7 @@ function selSeg(s){
 
 function setSeg(s){
 	var start = parseInt(d.getElementById(`seg${s}s`).value);
-	var stop	= parseInt(d.getElementById(`seg${s}e`).value);
+	var stop = parseInt(d.getElementById(`seg${s}e`).value);
 	if (stop <= start) {delSeg(s); return;}
 	var obj = {"seg": {"id": s, "start": start, "stop": stop}};
 	if (d.getElementById(`seg${s}grp`))
@@ -1653,7 +1667,7 @@ function cnfReset() {
 	}
 	window.location.href = "/reset";
 }
-
+/*
 var cnfrS = false;
 function rSegs() {
 	var bt = d.getElementById('rsbtn');
@@ -1753,7 +1767,7 @@ function cancelSearch(ic) {
   search(searchField);
   searchField.focus();
 }
-
+*/
 function expand(i,a) {
 	if (!a) expanded[i] = !expanded[i];
 	d.getElementById('seg' +i).style.display = (expanded[i]) ? "block":"none";

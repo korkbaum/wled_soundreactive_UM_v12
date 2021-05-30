@@ -141,7 +141,7 @@ class usermod_powerled : public Usermod {
     }
     
     uint16_t getId(){
-      return USERMOD_ID_POWERLED;
+      return USERMOD_ID_FXPAL_SELECTION;
     }
 };
 #endif
