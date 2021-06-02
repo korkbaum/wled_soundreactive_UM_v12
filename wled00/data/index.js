@@ -184,7 +184,7 @@ function loadBg(iUrl) {
 }
 
 async function onLoad() {
-
+	//console.log("onLoad");
 	locip = localStorage.getItem('locIp');
 	if (window.location.protocol == "file:") {
 		loc = true;
@@ -200,10 +200,11 @@ async function onLoad() {
 	var mySocket = new WebSocket(wsurl);
 	// Attach listener
 	mySocket.onmessage = function(event) { 
+		console.log("ws");
 		var json = JSON.parse(event.data);
 		if (handleJson(json.state)) updateUI(true);	
 	};
-
+	
 	await load_fx_pal_jsons(); //show only effects and palettes wich are marked as active in settings_leds
 	
 	var sett = localStorage.getItem('wledUiCfg');
@@ -911,7 +912,7 @@ function updatePresets() {
 
 
 function updateUI() {
-	console.log(Date.now(),"updateUI");
+	//console.log(Date.now(),"updateUI");
 	d.getElementById('buttonPower').className = (isOn) ? "active":"";
 	d.getElementById('PWRbuttonPower').className = (PWRisOn) ? "active":"";	
 	//d.getElementById('buttonNl').className = (nlA) ? "active":"";	
@@ -954,7 +955,7 @@ function cmpP(a, b) {
 
 var jsonTimeout;
 function requestJson(command, rinfo = true, verbose = true) {
-	console.log(Date.now(),"requestJson command rinfo", command, rinfo );
+	//console.log(Date.now(),"requestJson command rinfo", command, rinfo );
 	d.getElementById('connind').style.backgroundColor = "#a90";
 	lastUpdate = new Date();
 	if (!jsonTimeout) jsonTimeout = setTimeout(showErrorToast, 3000);
@@ -1002,80 +1003,81 @@ function requestJson(command, rinfo = true, verbose = true) {
 		}
 		var s = json;
 		
-		if (!command || rinfo) {
-			if (!rinfo) {
-				pmt = json.info.fs.pmt;
-				if (pmt != pmtLS || pmt == 0) {
-					console.log(Date.now(), "reqJson/loadPresets");
+			if (!command || rinfo) {
+				if (!rinfo) {
+					pmt = json.info.fs.pmt;
+					if (pmt != pmtLS || pmt == 0) {
+						//console.log(Date.now(), "reqJson/loadPresets");
+						setTimeout(loadPresets,99);
+					}
+					else {
+						populatePresets(true);
+					}
+					pmtLast = pmt;
+
+					var x = '<option value="0">Solid Color</option>';
+					json.effects.shift(); //remove solid 
+					for (let i = 0; i < json.effects.length; i++) json.effects[i] = {id: parseInt(i)+1, name:json.effects[i]};
+					json.effects.sort(compare);
+					for (let i = 0; i < json.effects.length; i++) {
+						Fx_IDs_Names.push([json.effects[i].id, json.effects[i].name]);		// keep effect ids+names list in global variable for rendering fx controls visible/invisible
+						if (fxJson[json.effects[i].id] == "true") {
+							x += `<option value="${json.effects[i].id}">${json.effects[i].name}</option>`;
+						}
+					}
+					e1.innerHTML = x;
+					
+					var y = '<option value="0">Default</option>';
+					json.palettes.shift(); //remove default
+					for (let i = 0; i < json.palettes.length; i++) json.palettes[i] = {id: parseInt(i)+1, name:json.palettes[i]};
+					json.palettes.sort(compare);
+					for (let i = 0; i < json.palettes.length; i++) {
+						if (palJson[json.palettes[i].id] == "true") {
+							y += `<option value="${json.palettes[i].id}">${json.palettes[i].name}</option>`;
+						}
+					}
+					e2.innerHTML = y;
+				}
+
+				var info = json.info;
+				var name = info.name;
+
+				d.getElementById('buttonI').innerHTML = name;
+				if (name === "Dinnerbone") {
+					d.documentElement.style.transform = "rotate(180deg)";
+				}
+				if (info.live) {
+					name = "(Live) " + name;
+				}
+				if (loc) {
+					name = "(L) " + name;
+				}
+				d.title = name;
+				isRgbw = info.leds.wv;
+				ledCount = info.leds.count;
+				syncTglRecv = info.str;
+				maxSeg = info.leds.maxseg;
+				pmt = info.fs.pmt;
+
+				if (!command && pmt != pmtLast) {
 					setTimeout(loadPresets,99);
 				}
-				else {
-					populatePresets(true);
-				}
 				pmtLast = pmt;
-
-				var x = '<option value="0">Solid Color</option>';
-				json.effects.shift(); //remove solid 
-				for (let i = 0; i < json.effects.length; i++) json.effects[i] = {id: parseInt(i)+1, name:json.effects[i]};
-				json.effects.sort(compare);
-				for (let i = 0; i < json.effects.length; i++) {
-					Fx_IDs_Names.push([json.effects[i].id, json.effects[i].name]);		// keep effect ids+names list in global variable for rendering fx controls visible/invisible
-					if (fxJson[json.effects[i].id] == "true") {
-						x += `<option value="${json.effects[i].id}">${json.effects[i].name}</option>`;
-					}
+				//d.getElementById('buttonNodes').style.display = (info.ndc > 0 && window.innerWidth > 770) ? "block":"none";
+				lastinfo = info;
+				if (isInfo) {
+					populateInfo(info);
 				}
-				e1.innerHTML = x;
-				
-				var y = '<option value="0">Default</option>';
-				json.palettes.shift(); //remove default
-				for (let i = 0; i < json.palettes.length; i++) json.palettes[i] = {id: parseInt(i)+1, name:json.palettes[i]};
-				json.palettes.sort(compare);
-				for (let i = 0; i < json.palettes.length; i++) {
-					if (palJson[json.palettes[i].id] == "true") {
-						y += `<option value="${json.palettes[i].id}">${json.palettes[i].name}</option>`;
-					}
-				}
-				e2.innerHTML = y;
+				s = json.state;
+				displayRover(info, s);
 			}
 
-			var info = json.info;
-			var name = info.name;
-
-			d.getElementById('buttonI').innerHTML = name;
-			if (name === "Dinnerbone") {
-				d.documentElement.style.transform = "rotate(180deg)";
-			}
-			if (info.live) {
-				name = "(Live) " + name;
-			}
-			if (loc) {
-				name = "(L) " + name;
-			}
-			d.title = name;
-			isRgbw = info.leds.wv;
-			ledCount = info.leds.count;
-			syncTglRecv = info.str;
-      		maxSeg = info.leds.maxseg;
-			pmt = info.fs.pmt;
-
-			if (!command && pmt != pmtLast) {
-				setTimeout(loadPresets,99);
-			}
-			pmtLast = pmt;
-      		//d.getElementById('buttonNodes').style.display = (info.ndc > 0 && window.innerWidth > 770) ? "block":"none";
-			lastinfo = info;
-			if (isInfo) {
-				populateInfo(info);
-			}
-			s = json.state;
-			displayRover(info, s);
-		}		
-			if (!handleJson(s)) {
+			/*if (!handleJson(s)) {
 				showToast('No Segments!', true);
 				updateUI(false);
-				if (callback) callback();
+				//if (callback) callback();
 				return;
-			}
+			}*/
 	
 			if (s.error && s.error != 0) {
 			  var errstr = "";
@@ -1097,15 +1099,15 @@ function requestJson(command, rinfo = true, verbose = true) {
 }
 	
 function handleJson(s) {
-	console.log(Date.now(), "handleJson");
+	//console.log(Date.now(), "handleJson");
 	if (!s) return false;
 
 	isOn = s.on;
-	PWRisOn = s.PWRon;		//Power Led mod
-	d.getElementById('buttonPower').value = s.on;	//Power Led mod
+	PWRisOn = s.PWRon;	
+	d.getElementById('buttonPower').value = s.on;
 	d.getElementById('PWRbuttonPower').value = s.PWRisOn;
 	d.getElementById('sliderBri').value = s.bri;
-	d.getElementById('sliderPWRBri').value = s.PWRbri;	//Power Led mod
+	d.getElementById('sliderPWRBri').value = s.PWRbri;
 	//nlA = s.nl.on;
 	//nlDur = s.nl.dur;
 	//nlTar = s.nl.tbri;
@@ -1174,7 +1176,7 @@ function handleJson(s) {
 		d.getElementById("fxlist").style.color = "White";	//change button text to white if FX is active
 		d.getElementById("effects").style.display = 'block';
 
-		if (fft_flag) document.getElementById("ffteffects").style.display = 'block';		// check if sound reactive effext is chosen, only then show fft controls
+		if (fft_flag) document.getElementById("ffteffects").style.display = 'block';	// check if sound reactive effext is chosen, only then show fft controls
 		else document.getElementById("ffteffects").style.display = 'none';
 	}
 	
