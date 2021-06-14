@@ -200,7 +200,7 @@ async function onLoad() {
 	var mySocket = new WebSocket(wsurl);
 	// Attach listener
 	mySocket.onmessage = function(event) { 
-		console.log("ws");
+		//console.log("ws");
 		var json = JSON.parse(event.data);
 		if (handleJson(json.state)) updateUI(true);	
 	};
@@ -233,7 +233,7 @@ async function onLoad() {
 	var sls = d.querySelectorAll('input[type="range"]');
 	for (var sl of sls) {
 		sl.addEventListener('input', updateBubble, true);
-		sl.addEventListener('touchstart', toggleBubble);
+		sl.addEventListener('touchstart', toggleBubble, {passive: true});
 		sl.addEventListener('touchend', toggleBubble);
 	}
 }
@@ -443,7 +443,7 @@ function populateQL() {
 		var it = 0;
 		for (var key of (pQL||[])) {
 			cn += `<button class="xxs btn psts" id="p${key[0]}qlb" onclick="setPreset(${key[0]});">${key[1]}</button>`;
-			cn2 += `<button class="xxs btn psts" id="p${key[0]}qlb" name="prebut" onclick="setPreset(${key[0]});">${key[1]}</button>`;
+			cn2 += `<button class="btn psts2" id="p${key[0]}qlb2" name="prebut" onclick="setPreset(${key[0]});">${key[1]}</button>`;
 			it++;
 			if (it >= 5) {		//UI mod, was >4
 				it = 0;
@@ -893,19 +893,17 @@ function updatePA() {
 	}*/
 	if (currentPreset > 0) {
 		var acv = d.getElementById(`p${currentPreset}o`);
-		if (acv && !expanded[currentPreset+100])
-			acv.style.background = "var(--c-6)";
+		if (acv && !expanded[currentPreset+100]) acv.style.backgroundColor = "var(--c-6)";
 		acv = d.getElementById(`p${currentPreset}qlb`);
-		if (acv) acv.style.background = "var(--c-6)";
+		if (acv) acv.style.backgroundColor = "var(--c-6)";
 	}
 }
 
 function updatePresets() {
-	if (currentPreset < 0) {			// no preset active/chosen
+	if (currentPreset < 0) {			// no preset active/chosen, un-highlight preset buttons
 		var TextElements = document.getElementsByName("prebut");
 		for (var i = 0, max = TextElements.length; i < max; i++) {
-			TextElements[i].style.backgroundColor = "#333";
-			TextElements[i].style.color = "Gray";
+			TextElements[i].style.backgroundColor = "var(--c-3)";
 		}
 	}
 }
@@ -1183,6 +1181,7 @@ function handleJson(s) {
 	d.getElementById("selectPalette").value = i.pal;
 
 	displayRover(lastinfo, s);
+	updateUI();
 	return true;
 }
 
@@ -1483,14 +1482,13 @@ function setPreset(i) {
 	showToast("Loading preset " + pName(i) +" (" + i + ")");
 	for (var j = 1; j < getLowestUnusedP(); j++) {
 		if (j != i) { 
-			d.getElementById(`p${j}qlb`).style.backgroundColor = "#333";
-			d.getElementById(`p${j}qlb`).style.color = "Gray";
+			d.getElementById(`p${j}qlb2`).style.backgroundColor = "var(--c-3)";
 		} else { 		// highlight only currrent preset
-			d.getElementById(`p${j}qlb`).style.backgroundColor = "#555";
-			d.getElementById(`p${j}qlb`).style.color = "White";
+			d.getElementById(`p${j}qlb2`).style.backgroundColor = "var(--c-5)";
 		}
 	}
 	requestJson(obj);
+	//updatePresets();
 }
 
 function saveP(i) {
@@ -1904,7 +1902,7 @@ _C.style.setProperty('--n', N);
 window.addEventListener('resize', size, false);
 
 _C.addEventListener('mousedown', lock, false);
-_C.addEventListener('touchstart', lock, false);
+_C.addEventListener('touchstart', lock, {passive: true}, false);
 
 _C.addEventListener('mouseout', move, false);
 _C.addEventListener('mouseup', move, false);

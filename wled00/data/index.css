@@ -794,13 +794,33 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .psts {
-	/*background-color: var(--c-3);*/
-	/*color: var(--c-f);*/
+	width: 40px;
+	margin: 6px;
+	/*background-color: var(--c-3);
+	color: gray;*/ 
 	cursor: pointer;
 	padding: 2px 0 0 0;
 	height: 40px;
 }
 .psts:hover {
+	background-color: var(--c-5);
+	color: var(--c-e);
+}
+
+.psts2 {
+	width: 40px;
+	height: 40px;
+	margin: 6px;
+	padding: 2px 0 0 0;
+	color: var(--c-f);
+	background-color: var(--c-3);
+	cursor: pointer;
+	font-size: 19px;
+	border: 0px solid white;
+    border-radius: 25px;
+    transition-duration: 0.5s;
+}
+.psts2:hover {
 	background-color: var(--c-5);
 	color: var(--c-e);
 }

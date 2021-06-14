@@ -5,7 +5,7 @@
 #ifdef ESP32		//won't run on ESP8266
 
 #define PWR_LED_PIN 17     //Hardware pin to attach mosfet gate for power led control 
-#define threshold 12       //KK: MagicReel: 12,  CubeBall: 9, def 60 
+#define threshold 9       //KK: MagicReel: 12,  CubeBall: 9, def 60 
 #define TOUCH_PIN T3
 
 //this is to run analogwrite style pwm dimming on esp32
@@ -22,7 +22,7 @@ void ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax = 255) {
 class usermod_powerled : public Usermod {
 	
   private:
-	unsigned long lastTime = 0;         //Interval
+	unsigned long lastTime = 0;           //Interval
     unsigned long lastTouch = 0;        //Timestamp of last Touch
     unsigned long lastRelease = 0;      //Timestamp of last Touch release
     boolean released = true;            //current Touch state (touched/released)
@@ -34,14 +34,16 @@ class usermod_powerled : public Usermod {
 
     // some variables for Power Led control
     bool PWRon = 0;
-    bool PWRonLast = 1;
-    uint8_t PWRbri = 32;
+    bool PWRonLast = 0;
+    uint8_t PWRbri = 0;
     uint8_t PWRbriLast = 0;
 
     void setup() {
       lastTouch = millis();
       lastRelease = millis();
       lastTime = millis();
+      PWRon = 0;
+      PWRbri = 0;
 		
   		pinMode(PWR_LED_PIN, OUTPUT);    //mosfet gate pin for power led pwm control
   
@@ -70,18 +72,19 @@ class usermod_powerled : public Usermod {
             touchDuration = lastRelease - lastTouch;               //Calculate duration
           }
   
-          if(touchDuration >= 500 && released) {                   //800 Toggle power if button press is longer than 800ms
+          /*if(touchDuration >= 500 && released) {                   //800 Toggle power if button press is longer than 800ms
+            touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
+            PWRon = !PWRon;
+            PWRtoggleOnOff();
+            //Serial.println("PWRtoggle");
+          } 
+          else */
+          if (touchDuration >= 100 && released) {              //100 Switch to next brightness if touch is between 100 and 800ms
             touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
             toggleOnOff();
             colorUpdated(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
             updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);                                    
             //Serial.println("toggle");
-          } 
-          else if (touchDuration >= 100 && released) {              //100 Switch to next brightness if touch is between 100 and 800ms
-            touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
-            PWRon = !PWRon;
-            PWRtoggleOnOff();
-            //Serial.println("PWRtoggle");
           }
         }
 		
@@ -95,6 +98,7 @@ class usermod_powerled : public Usermod {
     
     		if (PWRon != PWRonLast) {                               //change pwr on/off state if it was changed in GUI
           PWRtoggleOnOff();
+          updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
     		}		
 
     } // loop end
@@ -111,7 +115,6 @@ class usermod_powerled : public Usermod {
       PWRonLast = PWRon;
       colorUpdated(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
       updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
-  		//Serial.print("PWRtoggleOnOff on - bri - last: ");Serial.print(PWRon);Serial.print(" ");Serial.print(PWRbri);Serial.print(" ");Serial.println(PWRbriLast);
   	}
 
     void addToJsonState(JsonObject& root){
