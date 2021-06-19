@@ -445,7 +445,7 @@ function populateQL() {
 			cn += `<button class="xxs btn psts" id="p${key[0]}qlb" onclick="setPreset(${key[0]});">${key[1]}</button>`;
 			cn2 += `<button class="btn psts2" id="p${key[0]}qlb2" name="prebut" onclick="setPreset(${key[0]});">${key[1]}</button>`;
 			it++;
-			if (it >= 5) {		//UI mod, was >4
+			if (it >= 5) {
 				it = 0;
 				cn += '<br>'; cn2 += '<br>';
 			}
@@ -1096,7 +1096,7 @@ function requestJson(command, rinfo = true, verbose = true) {
 		});
 }
 	
-function handleJson(s) {
+function handleJson(s) {					//only called if websocket event was triggered by back end
 	//console.log(Date.now(), "handleJson");
 	if (!s) return false;
 
@@ -1902,8 +1902,8 @@ _C.style.setProperty('--n', N);
 window.addEventListener('resize', size, false);
 
 _C.addEventListener('mousedown', lock, false);
-_C.addEventListener('touchstart', lock, {passive: true}, false);
-
+//_C.addEventListener('touchstart', lock, {passive: true}, false);
+_C.addEventListener('touchstart', lock, false);
 _C.addEventListener('mouseout', move, false);
 _C.addEventListener('mouseup', move, false);
 _C.addEventListener('touchend', move, false);

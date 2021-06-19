@@ -35,7 +35,7 @@ class usermod_powerled : public Usermod {
     // some variables for Power Led control
     bool PWRon = 0;
     bool PWRonLast = 0;
-    uint8_t PWRbri = 0;
+    uint8_t PWRbri = 16;
     uint8_t PWRbriLast = 0;
 
     void setup() {
@@ -43,7 +43,7 @@ class usermod_powerled : public Usermod {
       lastRelease = millis();
       lastTime = millis();
       PWRon = 0;
-      PWRbri = 0;
+      //PWRbri = 0;
 		
   		pinMode(PWR_LED_PIN, OUTPUT);    //mosfet gate pin for power led pwm control
   
@@ -72,14 +72,13 @@ class usermod_powerled : public Usermod {
             touchDuration = lastRelease - lastTouch;               //Calculate duration
           }
   
-          /*if(touchDuration >= 500 && released) {                   //800 Toggle power if button press is longer than 800ms
+          if(touchDuration >= 500 && released) {                   //800 Toggle power if button press is longer than 800ms
             touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
             PWRon = !PWRon;
             PWRtoggleOnOff();
             //Serial.println("PWRtoggle");
           } 
-          else */
-          if (touchDuration >= 100 && released) {              //100 Switch to next brightness if touch is between 100 and 800ms
+          else if (touchDuration >= 100 && released) {              //100 Switch to next brightness if touch is between 100 and 800ms
             touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
             toggleOnOff();
             colorUpdated(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
