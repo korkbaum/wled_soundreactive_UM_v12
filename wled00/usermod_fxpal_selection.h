@@ -6,9 +6,7 @@ class usermod_fxpal_selection : public Usermod {
 	
   private:
 	
-	
   public:
-
    
     void setup() {
     }
@@ -18,9 +16,6 @@ class usermod_fxpal_selection : public Usermod {
 
     void loop() {
 		} 
-
-  	//void PWRtoggleOnOff() { 
-  	//}
 
     void addToConfig(JsonObject& root){
   		JsonObject top = root.createNestedObject("usermod_fxpal_selection");
