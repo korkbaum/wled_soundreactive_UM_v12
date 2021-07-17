@@ -33,7 +33,7 @@ class usermod_fxpal_selection : public Usermod {
         sprintf(indx, "%s%d", "palc", i);
         top[indx] = palsel_active[i];
       }
-      Serial.println("addtoconfig fx pal ready.");
+      //Serial.println("addtoconfig fx pal ready.");
     }
 
     void readFromConfig(JsonObject& root){
