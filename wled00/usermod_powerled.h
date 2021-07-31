@@ -1,3 +1,9 @@
+/*
+This user mode uses several parts of usermod_touchbrightness.h by Justin Kühner https://github.com/NeariX67 
+On short touch event the RGB Leds will toggle on/off.
+On Long touch event the PowerLed toggles power on/off.
+*/
+
 #pragma once
 
 #include "wled.h"

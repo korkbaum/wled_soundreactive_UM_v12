@@ -123,6 +123,7 @@
 #include "html_settings.h"
 #include "html_other.h"
 #include "FX.h"
+#include "palettes.h"   // to get GRADIENT_PALETTE_COUNT defined here for usermod_fxpalselection.h
 #include "ir_codes.h"
 #include "const.h"
 #include "NodeStruct.h"
@@ -287,8 +288,10 @@ WLED_GLOBAL uint16_t transitionDelay _INIT(750);    // default crossfade duratio
 WLED_GLOBAL bool skipFirstLed  _INIT(false);        // ignore first LED in strip (useful if you need the LED as signal repeater)
 WLED_GLOBAL byte briMultiplier _INIT(100);          // % of brightness to set (to limit power, if you set it to 50 and set bri to 255, actual brightness will be 127)
 
-WLED_GLOBAL bool fxsel_active[170] _INIT_N(({true}));      // selected effects active flag, number must be >= fxcount
-WLED_GLOBAL bool palsel_active[80] _INIT_N(({true}));      // selected palettes active flag, number must be >= palette count
+#ifdef USERMOD_ID_FXPAL_SELECTION
+WLED_GLOBAL bool fxsel_active[MODE_COUNT] _INIT_N(({true}));      // selected effects active flag, number must be >= fxcount 170
+WLED_GLOBAL bool palsel_active[GRADIENT_PALETTE_COUNT] _INIT_N(({true}));      // selected palettes active flag, number must be >= palette count
+#endif
 
 // User Interface CONFIG
 WLED_GLOBAL char serverDescription[33] _INIT("WLED-SoundReactive");  // Name of module

@@ -18,6 +18,10 @@
 #include "usermod_powerled.h"
 #endif
 
+#ifdef USERMOD_ID_TOUCHRANDOM
+#include "usermod_touchrandom.h"
+#endif
+
 //#include "usermod_v2_example.h"
 #ifdef USERMOD_DALLASTEMPERATURE
 #include "../usermods/Temperature/usermod_temperature.h"
@@ -85,6 +89,10 @@ void registerUsermods()
 
   #ifdef USERMOD_ID_POWERLED
   usermods.add(new usermod_powerled());
+  #endif
+
+  #ifdef USERMOD_ID_TOUCHRANDOM
+  usermods.add(new usermod_touchrandom());
   #endif
 
   #ifdef USERMOD_DALLASTEMPERATURE
