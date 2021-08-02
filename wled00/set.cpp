@@ -82,6 +82,7 @@ void handleSettingsSet(AsyncWebServerRequest *request, byte subPage)
     if (irPin>=0 && pinManager.isPinAllocated(irPin)) pinManager.deallocatePin(irPin);
     #endif
     if (btnPin>=0 && pinManager.isPinAllocated(btnPin)) pinManager.deallocatePin(btnPin);
+    if (PWRLedPin>=0 && pinManager.isPinAllocated(PWRLedPin)) pinManager.deallocatePin(PWRLedPin);
     //TODO remove all busses, but not in this system call
     //busses->removeAll();
 
@@ -151,6 +152,14 @@ void handleSettingsSet(AsyncWebServerRequest *request, byte subPage)
       pinMode(btnPin, INPUT_PULLUP);
     } else {
       btnPin = -1;
+    }
+
+    int hw_powerled_pin = request->arg(F("PLP")).toInt();
+    if (pinManager.allocatePin(hw_powerled_pin,false)) {
+      PWRLedPin = hw_powerled_pin;
+      pinMode(PWRLedPin, OUTPUT);
+    } else {
+      PWRLedPin = -1;
     }
 
     strip.ablMilliampsMax = request->arg(F("MA")).toInt();

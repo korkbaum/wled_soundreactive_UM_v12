@@ -8,7 +8,7 @@ Long touch toggles power on/off.
 
 #include "wled.h"
 
-#define threshold 7       //KK: MagicReel: 12,  CubeBall: 9, def 60, MicroCube: 7
+#define threshold 3       //KK: MagicReel: 12,  CubeBall: 9, def 60, MicroCube: 3
 #define TOUCH_PIN T3
 
 class usermod_touchrandom : public Usermod {
@@ -79,15 +79,18 @@ class usermod_touchrandom : public Usermod {
             updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
             //Serial.println("toggle on/off");
           } 
-          else if (touchDuration >= 100 && released) {             //100 Switch to next brightness if touch is between 100 and 800ms
+          else if (touchDuration >= 100 && released) {             //100 trigger random effect & palette
             touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
+            
             int eff_index = random(1, fx_active_count);            //random effect, leave solid out
             effectCurrent = fx_active[eff_index];
+            
             int pal_index = random(0, pal_active_count);           //random palette
             effectPalette = pal_active[pal_index];
+            
             colorUpdated(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
             updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);                                    
-            Serial.printf("%s%i%s%i", "\neffect: ", fx_active[eff_index], " palette: ", pal_active[pal_index]);
+            //Serial.printf("%s%i%s%i", "\neffect: ", fx_active[eff_index], " palette: ", pal_active[pal_index]);
           }
         }
 

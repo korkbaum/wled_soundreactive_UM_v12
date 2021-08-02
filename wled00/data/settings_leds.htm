@@ -184,14 +184,14 @@
       for (i=0; i<LCs.length; i++) {
         var nm = LCs[i].name.substring(0,2);
         //check for pin conflicts
-        if (nm=="L0" || nm=="L1" || nm=="RL" || nm=="BT" || nm=="IR" || nm=="AX")
+        if (nm=="L0" || nm=="L1" || nm=="RL" || nm=="BT" || nm=="IR" || nm=="AX" || nm=="PLP")
           if (LCs[i].value!="" && LCs[i].value!="-1") {
             if (LCs[i].value > 5 && LCs[i].value < 12) {alert("Sorry, pins 6-11 can not be used.");LCs[i].focus();return;}
             if (d.um_p && d.um_p.some((e)=>e==parseInt(LCs[i].value,10))) {alert("Usermod pin conflict!");LCs[i].focus();return;}
             for (j=i+1; j<LCs.length; j++)
             {
               var n2 = LCs[j].name.substring(0,2);
-              if (n2=="L0" || n2=="L1" || n2=="RL" || n2=="BT" || n2=="IR" || n2=="AX")
+              if (n2=="L0" || n2=="L1" || n2=="RL" || n2=="BT" || n2=="IR" || n2=="AX" || n2=="PLP")
                 if (LCs[j].value!="" && LCs[i].value==LCs[j].value) {alert("Pin conflict!");LCs[i].focus();return;}
             }
           }
@@ -486,8 +486,9 @@
     Button pin: <input type="number" min="-1" max="40" name="BT" onchange="UI()"><span style="cursor: pointer;" onclick="off('BT')">&nbsp;&#215;</span><br>
     IR pin: <input type="number" min="-1" max="40" name="IR" onchange="UI()"><span style="cursor: pointer;" onclick="off('IR')">&nbsp;&#215;</span><br>
     Relay pin: <input type="number" min="-1" max="40" name="RL" onchange="UI()"><span style="cursor: pointer;" onclick="off('RL')">&nbsp;&#215;</span><br>
-    Active high <input type="checkbox" name="RM">
-		<h3>Defaults</h3>
+    Active high <input type="checkbox" name="RM"><br>
+    Power LED Pin: <input type="number" min="-1" max="36" name="PLP" onchange="UI()"><span style="cursor: pointer;" onclick="off('PLP')">&nbsp;&#215;</span><br>
+    <h3>Defaults</h3>
 		Turn LEDs on after power up/reset: <input type="checkbox" name="BO"><br>
     Default brightness: <input name="CA" type="number" min="0" max="255" required> (0-255)<br><br>
     Apply preset <input name="BP" type="number" min="0" max="250" required> at boot (0 uses defaults)

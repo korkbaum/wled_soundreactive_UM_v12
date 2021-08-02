@@ -203,6 +203,11 @@ WLED_GLOBAL int8_t rlyPin _INIT(12);
 #else
 WLED_GLOBAL int8_t rlyPin _INIT(RLYPIN);
 #endif
+#ifndef PWRLEDPIN
+WLED_GLOBAL int8_t PWRLedPin _INIT(17);
+#else
+WLED_GLOBAL int8_t PWRLedPin _INIT(PWRLEDPIN);
+#endif
 //Relay mode (1 = active high, 0 = active low, flipped in cfg.json)
 #ifndef RLYMDE
 WLED_GLOBAL bool rlyMde _INIT(true);

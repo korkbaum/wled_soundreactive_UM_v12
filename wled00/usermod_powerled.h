@@ -10,7 +10,7 @@ On Long touch event the PowerLed toggles power on/off.
 
 #ifdef ESP32		//won't run on ESP8266
 
-#define PWR_LED_PIN 17     //Hardware pin to attach mosfet gate for power led control 
+//PWR_LED_PIN default = 17    Hardware pin to attach mosfet gate for power led control, assign in settings_leds.htm
 #define threshold 12       //KK: MagicReel: 12,  CubeBall: 9, def 60 
 #define TOUCH_PIN T3
 
@@ -50,12 +50,10 @@ class usermod_powerled : public Usermod {
       lastTime = millis();
       PWRon = 0;
       //PWRbri = 0;
-		
-  		pinMode(PWR_LED_PIN, OUTPUT);    //mosfet gate pin for power led pwm control
-  
+		  
   		//for pwm dimming pwr led, no "analogwrite" function on esp32 like on ESP8266
   		ledcSetup(LEDC_CHANNEL_0, LEDC_BASE_FREQ, LEDC_TIMER_13_BIT);
-  		ledcAttachPin(PWR_LED_PIN, LEDC_CHANNEL_0);			
+  		ledcAttachPin(PWRLedPin, LEDC_CHANNEL_0);			
     }
 
     void connected() {

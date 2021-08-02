@@ -149,6 +149,17 @@ bool deserializeConfig(JsonObject doc, bool fromFS) {
   CJSON(macroLongPress,hw_btn_ins_0_macros[1]);
   CJSON(macroDoublePress, hw_btn_ins_0_macros[2]);
 
+  JsonObject powerled = hw[F("PowerLed")];
+  int hw_powerled_pin = powerled["pin"] | -2;
+  if (hw_powerled_pin > -2) {
+    if (pinManager.allocatePin(hw_powerled_pin,true)) {
+      PWRLedPin = hw_powerled_pin;
+      pinMode(PWRLedPin, OUTPUT);
+    } else {
+      PWRLedPin = -1;
+    }
+  }
+
   #ifndef WLED_DISABLE_INFRARED
   int hw_ir_pin = hw["ir"]["pin"] | -2; // 4
   if (hw_ir_pin > -2) {
@@ -575,6 +586,9 @@ void serializeConfig() {
   hw_btn_ins_0_macros.add(macroButton);
   hw_btn_ins_0_macros.add(macroLongPress);
   hw_btn_ins_0_macros.add(macroDoublePress);
+
+  JsonObject hw_powerled = hw.createNestedObject(F("PowerLed"));
+  hw_powerled["pin"] = PWRLedPin;
 
   #ifndef WLED_DISABLE_INFRARED
   JsonObject hw_ir = hw.createNestedObject("ir");
