@@ -365,15 +365,14 @@ void getSettingsJS(byte subPage, char* dest)
 
     //fx selection
     char chkboxc[12];
-    for (int i = 1; i < strip.getModeCount(); i++) {
+    for (int i = 1; i < MODE_COUNT; i++) {
       chkboxc[0] = '\0';
       sprintf(chkboxc, "%s%d", "fxc", i);
       sappend('c',SET_F(chkboxc), fxsel_active[i]);
     }
 
     //palette selection
-    chkboxc[0] = '\0';
-    for (int i = 1; i < strip.getPaletteCount(); i++) {
+    for (int i = 1; i < GRADIENT_PALETTE_COUNT; i++) {
       chkboxc[0] = '\0';
       sprintf(chkboxc, "%s%d", "palc", i);
       sappend('c',SET_F(chkboxc), palsel_active[i]);

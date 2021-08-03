@@ -2,6 +2,7 @@
 var loc = false, locip;
 var noNewSegs = false;
 var isOn = false, nlA = false, isLv = false, isInfo = false, isNodes = false, syncSend = false, syncTglRecv = true, isRgbw = false;
+var PWR = 0;
 var PWRisOn = false;	//PowerLed mod
 var whites = [0,0,0];
 var selColors;
@@ -72,6 +73,7 @@ function applyCfg()
 	cTheme(cfg.theme.base === "light");
 	var bg = cfg.theme.color.bg;
 	if (bg) sCol('--c-1', bg);
+	if (PWR == 0) d.getElementById('PWRil').style.display = "none";
 	var ccfg = cfg.comp.colors;
 	d.getElementById('hexw').style.display = ccfg.hex ? "block":"none";
 	d.getElementById('picker').style.display = ccfg.picker ? "block":"none";
@@ -254,21 +256,27 @@ async function load_fx_pal_jsons() {
 
 	for(var k in obj) {
 		if(obj[k] instanceof Object) {
+
 			if (k == "um") {		// usermods json values from cfg(.json)
-				var fxpalobj = obj["um"]["usermod_fxpal_selection"];
-			
-				for (const [key, value] of Object.entries(fxpalobj)) {
-					strfx = key.substr(0,3);
-					if (strfx == "fxc") {
-						fxJson[i] = `${value}`;
-						i++;
-					}
-					strpal = key.substr(0,4);
-					if (strpal == "palc") {
-						palJson[j] = `${value}`;
-						j++;
+
+				if (typeof obj["um"]["usermod_fxpal_selection"] !== 'undefined' ) {		//double check if values are there at all
+					var fxpalobj = obj["um"]["usermod_fxpal_selection"];
+				
+					for (const [key, value] of Object.entries(fxpalobj)) {
+						strfx = key.substr(0,3);
+						if (strfx == "fxc") {
+							fxJson[i] = `${value}`;
+							i++;
+						}
+						strpal = key.substr(0,4);
+						if (strpal == "palc") {
+							palJson[j] = `${value}`;
+							j++;
+						}
 					}
 				}
+				if (typeof obj["um"]["usermod_powerled"] !== 'undefined' ) PWR = 1;		//double check if values are there at all
+				else PWR = 0;
 			}
 		};
 	}
@@ -910,15 +918,17 @@ function updatePresets() {
 
 
 function updateUI() {
-	//console.log(Date.now(),"updateUI");
+
 	d.getElementById('buttonPower').className = (isOn) ? "active":"";
-	d.getElementById('PWRbuttonPower').className = (PWRisOn) ? "active":"";	
+	if (PWR == 1) { d.getElementById('PWRbuttonPower').className = (PWRisOn) ? "active":""; }
+	else { d.getElementById('PWRbuttonPower').style = "display:none"; }
 	//d.getElementById('buttonNl').className = (nlA) ? "active":"";	
 	d.getElementById('buttonSync').className = (syncSend) ? "active":"";
 
 	//d.getElementById('fxb' + selectedFx).style.backgroundColor = "var(--c-6)";
 	updateTrail(d.getElementById('sliderBri'));
-	updateTrail(d.getElementById('sliderPWRBri'));
+	if (PWR == 1) { updateTrail(d.getElementById('sliderPWRBri')); 	}
+	else { d.getElementById('sliderPWRBri').style = "display:none"; }	
 	updateTrail(d.getElementById('sliderSpeed'));
 	updateTrail(d.getElementById('sliderIntensity'));
 	updateTrail(d.getElementById('sliderFFT1'));
@@ -1103,9 +1113,9 @@ function handleJson(s) {					//only called if websocket event was triggered by b
 	isOn = s.on;
 	PWRisOn = s.PWRon;	
 	d.getElementById('buttonPower').value = s.on;
-	d.getElementById('PWRbuttonPower').value = s.PWRisOn;
+	if (PWR == 1) d.getElementById('PWRbuttonPower').value = s.PWRisOn;
 	d.getElementById('sliderBri').value = s.bri;
-	d.getElementById('sliderPWRBri').value = s.PWRbri;
+	if (PWR == 1) d.getElementById('sliderPWRBri').value = s.PWRbri;
 	//nlA = s.nl.on;
 	//nlDur = s.nl.dur;
 	//nlTar = s.nl.tbri;

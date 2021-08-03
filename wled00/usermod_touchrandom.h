@@ -8,8 +8,6 @@ Long touch toggles power on/off.
 
 #include "wled.h"
 
-#define threshold 3       //KK: MagicReel: 12,  CubeBall: 9, def 60, MicroCube: 3
-#define TOUCH_PIN T3
 
 class usermod_touchrandom : public Usermod {
 	
@@ -18,6 +16,9 @@ class usermod_touchrandom : public Usermod {
     int fx_active_count = 0;
     int pal_active[GRADIENT_PALETTE_COUNT];
     int pal_active_count = 0;
+
+    int my_touchpin;                    //variables read from /cfg
+    int my_threshold;                   //KK: MagicReel: 12,  CubeBall: 9, def 60, MicroCube: 3
 	  
     unsigned long lastTime = 0;         //Interval
     unsigned long lastTouch = 0;        //Timestamp of last Touch
@@ -59,14 +60,14 @@ class usermod_touchrandom : public Usermod {
 		
         if (millis() - lastTime >= 50) {                          //Check every 50ms if a touch occurs
           lastTime = millis();
-          touchReading = touchRead(TOUCH_PIN);                    //Read touch sensor 
+          touchReading = touchRead(my_touchpin);                    //Read touch sensor 
           //Serial.println(touchReading);
 
-          if(touchReading < threshold && released) {              //touch started
+          if(touchReading < my_threshold && released) {              //touch started
             released = false;
             lastTouch = millis();
           }
-          else if (touchReading >= threshold && !released) {      //Touch released
+          else if (touchReading >= my_threshold && !released) {      //Touch released
             released = true;
             lastRelease = millis();
             touchDuration = lastRelease - lastTouch;              //Calculate duration
@@ -95,6 +96,19 @@ class usermod_touchrandom : public Usermod {
         }
 
     } // loop end
+
+    void addToConfig(JsonObject& root) {
+      JsonObject top = root.createNestedObject("touch");
+      top["tpin"] = my_touchpin;
+      top["thre"] = my_threshold;
+    }
+
+    void readFromConfig(JsonObject& root) {
+      JsonObject top = root["touch"];
+      my_touchpin = top["tpin"] | 15;   // Touchpin T3 = GPIO 15 / default
+      my_threshold = top["thre"] | 10;  // threshold 10 / default
+    }
+
     
     uint16_t getId(){
       return USERMOD_ID_TOUCHRANDOM;

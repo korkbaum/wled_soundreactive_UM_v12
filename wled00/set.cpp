@@ -195,15 +195,14 @@ void handleSettingsSet(AsyncWebServerRequest *request, byte subPage)
 
     //fx selection checkboxes
     char chkboxc[12];
-    for (int i = 1; i < strip.getModeCount(); i++) {
+    for (int i = 1; i < MODE_COUNT; i++) {
       chkboxc[0] = '\0';
       sprintf(chkboxc, "%s%d", "fxc", i);
       fxsel_active[i] = request->hasArg(F(chkboxc));
     }
 
     //palette selection checkboxes
-    chkboxc[0] = '\0';
-    for (int i = 1; i < strip.getPaletteCount(); i++) {
+    for (int i = 1; i < GRADIENT_PALETTE_COUNT; i++) {
       chkboxc[0] = '\0';
       sprintf(chkboxc, "%s%d", "palc", i);
       palsel_active[i] = request->hasArg(F(chkboxc));
