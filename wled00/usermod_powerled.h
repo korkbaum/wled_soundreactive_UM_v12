@@ -11,8 +11,9 @@ On Long touch event the PowerLed toggles power on/off.
 #ifdef ESP32		//won't run on ESP8266
 
 //PWR_LED_PIN default = 17    Hardware pin to attach mosfet gate for power led control, assign in settings_leds.htm
-#define threshold 12       //KK: MagicReel: 12,  CubeBall: 9, def 60 
-#define TOUCH_PIN T3
+#define TOUCHCONTROL_ENABLED 1    // turn touch control on or off (unelegantly)
+#define threshold 50              // KK: MagicReel: 12,  CubeBall: 9, def 60 
+#define TOUCH_PIN T3              // T3 = GPIO 15
 
 //this is to run analogwrite style pwm dimming on esp32
 #define LEDC_CHANNEL_0     0
@@ -61,33 +62,35 @@ class usermod_powerled : public Usermod {
 
     void loop() {
 		
-        if (millis() - lastTime >= 50) {                          //Check every 50ms if a touch occurs
-          lastTime = millis();
-          touchReading = touchRead(TOUCH_PIN);                    //Read touch sensor 
-          //Serial.println(touchReading);
+        if (TOUCHCONTROL_ENABLED) {
+          if (millis() - lastTime >= 50) {                          //Check every 50ms if a touch occurs
+            lastTime = millis();
+            touchReading = touchRead(TOUCH_PIN);                    //Read touch sensor 
+            //Serial.println(touchReading);
 
-          if(touchReading < threshold && released) {              //touch started
-            released = false;
-            lastTouch = millis();
-          }
-          else if (touchReading >= threshold && !released) {      //Touch released
-            released = true;
-            lastRelease = millis();
-            touchDuration = lastRelease - lastTouch;              //Calculate duration
-          }
-  
-          if(touchDuration >= 500 && released) {                   //800 Toggle power if button press is longer than 800ms
-            touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
-            PWRon = !PWRon;
-            PWRtoggleOnOff();
-            //Serial.println("PWRtoggle");
-          } 
-          else if (touchDuration >= 100 && released) {             //100 Switch to next brightness if touch is between 100 and 800ms
-            touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
-            toggleOnOff();
-            colorUpdated(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
-            updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);                                    
-            //Serial.println("toggle");
+            if(touchReading < threshold && released) {              //touch started
+              released = false;
+              lastTouch = millis();
+            }
+            else if (touchReading >= threshold && !released) {      //Touch released
+              released = true;
+              lastRelease = millis();
+              touchDuration = lastRelease - lastTouch;              //Calculate duration
+            }
+    
+            if(touchDuration >= 500 && released) {                   //800 Toggle power if button press is longer than 800ms
+              touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
+              PWRon = !PWRon;
+              PWRtoggleOnOff();
+              //Serial.println("PWRtoggle");
+            } 
+            else if (touchDuration >= 100 && released) {             //100 Switch to next brightness if touch is between 100 and 800ms
+              touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
+              toggleOnOff();
+              colorUpdated(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
+              updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);                                    
+              //Serial.println("toggle");
+            }
           }
         }
 		
@@ -101,7 +104,6 @@ class usermod_powerled : public Usermod {
     
     		if (PWRon != PWRonLast) {                               //change pwr on/off state if it was changed in GUI
           PWRtoggleOnOff();
-          updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
     		}		
 
     } // loop end
@@ -117,7 +119,7 @@ class usermod_powerled : public Usermod {
       }
       PWRonLast = PWRon;
       //colorUpdated(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
-      //updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
+      updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
   	}
 
     void addToJsonState(JsonObject& root){

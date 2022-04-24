@@ -109,7 +109,6 @@ class usermod_touchrandom : public Usermod {
       my_threshold = top["thre"] | 10;  // threshold 10 / default
     }
 
-    
     uint16_t getId(){
       return USERMOD_ID_TOUCHRANDOM;
     }
