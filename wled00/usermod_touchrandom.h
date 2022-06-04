@@ -8,6 +8,7 @@ Long touch toggles power on/off.
 
 #include "wled.h"
 
+#define TOUCHRANDOM_DEBUG 0
 
 class usermod_touchrandom : public Usermod {
 	
@@ -58,29 +59,29 @@ class usermod_touchrandom : public Usermod {
 
     void loop() {
 		
-        if (millis() - lastTime >= 50) {                          //Check every 50ms if a touch occurs
+        if (millis() - lastTime >= 50) {                         // Check every 50ms if a touch occurs
           lastTime = millis();
-          touchReading = touchRead(my_touchpin);                    //Read touch sensor 
-          //Serial.println(touchReading);
+          touchReading = touchRead(my_touchpin);                 // Read touch sensor 
+          if (TOUCHRANDOM_DEBUG) Serial.println(touchReading);
 
-          if(touchReading < my_threshold && released) {              //touch started
+          if(touchReading <= my_threshold && released) {         //touch started
             released = false;
             lastTouch = millis();
           }
-          else if (touchReading >= my_threshold && !released) {      //Touch released
+          else if (touchReading > my_threshold && !released) {    //Touch released
             released = true;
             lastRelease = millis();
             touchDuration = lastRelease - lastTouch;              //Calculate duration
           }
   
-          if(touchDuration >= 500 && released) {                   //800 Toggle power if button press is longer than 800ms
+          if(touchDuration >= 1000 && released) {                   //800ms Toggle power if button press is longer than 800ms
             touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
             toggleOnOff();
             colorUpdated(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
             updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
-            //Serial.println("toggle on/off");
+            if (TOUCHRANDOM_DEBUG) Serial.println("toggle on/off");
           } 
-          else if (touchDuration >= 100 && released) {             //100 trigger random effect & palette
+          else if (touchDuration >= 200 && released) {             //200ms trigger random effect & palette
             touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
             
             int eff_index = random(1, fx_active_count);            //random effect, leave solid out
@@ -91,7 +92,7 @@ class usermod_touchrandom : public Usermod {
             
             colorUpdated(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
             updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);                                    
-            //Serial.printf("%s%i%s%i", "\neffect: ", fx_active[eff_index], " palette: ", pal_active[pal_index]);
+            if (TOUCHRANDOM_DEBUG) Serial.printf("%s%i%s%i", "\neffect: ", fx_active[eff_index], " palette: ", pal_active[pal_index]);
           }
         }
 
@@ -105,11 +106,11 @@ class usermod_touchrandom : public Usermod {
 
     void readFromConfig(JsonObject& root) {
       JsonObject top = root["touch"];
-      my_touchpin = top["tpin"] | 15;   // Touchpin T3 = GPIO 15 / default
-      my_threshold = top["thre"] | 10;  // threshold 10 / default
+      my_touchpin = top["tpin"] | 15;   // Touchpin T3 = GPIO 15 = default
+      my_threshold = top["thre"] | 10;  // threshold 10 = default
     }
 
     uint16_t getId(){
       return USERMOD_ID_TOUCHRANDOM;
     }
-};
+}; 

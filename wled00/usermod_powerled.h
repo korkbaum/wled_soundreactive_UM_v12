@@ -11,9 +11,9 @@ On Long touch event the PowerLed toggles power on/off.
 #ifdef ESP32		//won't run on ESP8266
 
 //PWR_LED_PIN default = 17    Hardware pin to attach mosfet gate for power led control, assign in settings_leds.htm
-#define TOUCHCONTROL_ENABLED 1    // turn touch control on or off (unelegantly)
-#define threshold 50              // KK: MagicReel: 12,  CubeBall: 9, def 60 
-#define TOUCH_PIN T3              // T3 = GPIO 15
+#define TOUCHCONTROL_ENABLED 0    // turn touch control on or off (unelegantly)
+//#define threshold 50              // KK: MagicReel: 12,  CubeBall: 9, def 60 
+//#define TOUCH_PIN T3              // T3 = GPIO 15
 
 //this is to run analogwrite style pwm dimming on esp32
 #define LEDC_CHANNEL_0     0
@@ -36,6 +36,9 @@ class usermod_powerled : public Usermod {
     uint16_t touchReading = 0;          //sensor reading
     uint16_t touchDuration = 0;         //duration of last touch
     uint16_t touchreading_old = 0;      //to compare last value and current value
+
+    int my_touchpin;                    //variables read from /cfg
+    int my_threshold;                   //KK: MagicReel: 12,  CubeBall: 9, def 60, MicroCube: 3
 	
   public:
 
@@ -65,14 +68,14 @@ class usermod_powerled : public Usermod {
         if (TOUCHCONTROL_ENABLED) {
           if (millis() - lastTime >= 50) {                          //Check every 50ms if a touch occurs
             lastTime = millis();
-            touchReading = touchRead(TOUCH_PIN);                    //Read touch sensor 
+            touchReading = touchRead(my_touchpin);                    //Read touch sensor 
             //Serial.println(touchReading);
 
-            if(touchReading < threshold && released) {              //touch started
+            if(touchReading < my_threshold && released) {              //touch started
               released = false;
               lastTouch = millis();
             }
-            else if (touchReading >= threshold && !released) {      //Touch released
+            else if (touchReading >= my_threshold && !released) {      //Touch released
               released = true;
               lastRelease = millis();
               touchDuration = lastRelease - lastTouch;              //Calculate duration
@@ -140,16 +143,28 @@ class usermod_powerled : public Usermod {
       userVar0 = PWRbri;
   		top["PWRon"] = PWRon;	
       userVar1 = PWRon;
+
+      if (TOUCHCONTROL_ENABLED) {
+        JsonObject top = root.createNestedObject("touch");
+        top["tpin"] = my_touchpin;
+        top["thre"] = my_threshold;
+      }
     }
 
     void readFromConfig(JsonObject& root){
   		JsonObject top = root["usermod_powerled"];
       PWRbri = top["PWRbri"] | userVar0;
   		PWRon  = top["PWRon"] | userVar1;
+      if (TOUCHCONTROL_ENABLED) {
+        JsonObject top = root["touch"];
+        my_touchpin = top["tpin"] | 15;   // Touchpin T3 = GPIO 15 / default
+        my_threshold = top["thre"] | 10;  // threshold 10 / default
+      }
     }
     
     uint16_t getId(){
       return USERMOD_ID_POWERLED;
     }
+    
 };
 #endif
