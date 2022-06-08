@@ -9,7 +9,7 @@ body {
 hr {
   border-color: #666;
 }
-button {
+button, .btn {
   background: #333;
   color: #fff;
   font-family: Verdana, sans-serif;

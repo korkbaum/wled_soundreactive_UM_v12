@@ -19,18 +19,16 @@
 <div class="wrapper" id="top">
 	<div class="tab top">
 		<div class="btnwrap">
-			<button id="buttonPower" onclick="togglePower()" class="tgl"><i class='colorwheelicon'></i><br>Mood</button>
-			<button id="PWRbuttonPower" onclick="PWRtogglePower()" class="tgl"><i class="icons">&#9728;&#65039;</i><br>Room</button> 
+			<button id="buttonPower" onclick="togglePower()"><i class="icons"></i><img src="24px-Color_circle.png" alt=""><p class="tab-label">Mood</p></button>
+			<button id="PWRbuttonPower" onclick="PWRtogglePower()"><i class="icons"></i><img src="24px-sun-icon.png" alt=""><p class="tab-label">Room</p></button> 
 			<button id="buttonSync" onclick="toggleSync()"><i class="icons">&#xe116;</i><p class="tab-label">Sync</p></button>
-			<button id="buttonSr" onclick="toggleLiveview()"><i class="icons">&#xe410;</i><p class="tab-label">Peek</p></button>
-
-			<button id="buttonSeg" onclick="openTab(1)" ><i class="icons">&#xe34b;</i><br>Seg</button>
+			<button id="buttonSeg" onclick="openTab(1)" ><i class="icons">&#xe34b;</i><p class="tab-label">Seg</p></button>
 			<button onclick="window.location.href = '/settings';"><i class="icons">&#xe0a2;</i><p class="tab-label">Config</p></button>
 		</div>
 		<div id="briwrap">
 			<!--<p class="hd"></p>-->
 			<div class="il">
-				<i class="slidercolorwheelicon" onclick="tglTheme()"></i></i>
+				<i class='colorwheelslidericon' onclick="tglTheme()"></i></i>
 				<div class="sliderwrap il">
 					<input id="sliderBri" onchange="setBri()" oninput="updateTrail(this)" max="255" min="1" type="range" value="128" />
 					<div class="sliderdisplay"></div>
@@ -38,7 +36,7 @@
 			</div>
 			<p class="hd"></p>
 			<div id="PWRil" class="PWRil">
-				<i class="icons slider-icon">&#9728;&#65039;</i>
+				<i class="sunslidericon"></i>
 				<div class="sliderwrap il" >
 					<input id="sliderPWRBri" onchange="setPWRBri()" oninput="updateTrail(this)" max="255" min="1" type="range" value="64" />
 					<div class="sliderdisplay"></div>
@@ -188,7 +186,7 @@
 		Last preset: <input id="cyce" class="noslide" type="number" min="2" max="250" value="3"><br>
 		Time per preset: <input id="cyct" class="noslide" type="number" min="0.2" max="6553.5" step="0.1" value="10">s<br>
 		Transition: <input id="cyctt" class="noslide" type="number" min="0" max="65.5" step="0.1" value="0.7">s
-		<br><br><button id="btn" onclick="openTab(0)" class="btn btn-cancel">Cancel</button>
+		<br><br><br><button id="btn" onclick="openTab(0)" class="btn btn-cancel">Back</button>
 	</div>
 </div>
 

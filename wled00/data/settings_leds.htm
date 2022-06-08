@@ -136,8 +136,10 @@
         for (let i = 0; i < json.effects.length; i++) json.effects[i] = {id: parseInt(i)+1, name:json.effects[i]};
         json.effects.sort(compare);
         for (let i = 0; i < json.effects.length; i++) {
-          x += `<button type="button" class="button2" id="fxb${i}" onclick="setX(${json.effects[i].id});">${json.effects[i].name}</button>`;			 
-          x += `<input type="checkbox" name="fxc${json.effects[i].id}" checked><br>`;
+          if ((json.effects[i].name.substring(0,2) != "2D") && (json.effects[i].name.substring(0,5) != "** 2D")) {
+            x += `<button type="button" class="button2" id="fxb${i}" onclick="setX(${json.effects[i].id});">${json.effects[i].name}</button>`;			 
+            x += `<input type="checkbox" name="fxc${json.effects[i].id}" ><br>`;
+          }
         }
         e1.innerHTML = x; 
         
@@ -145,8 +147,10 @@
         for (let i = 0; i < json.palettes.length; i++) json.palettes[i] = {"id": parseInt(i)+1, "name":json.palettes[i]};
         json.palettes.sort(compare);
         for (let i = 0; i < json.palettes.length; i++) {
-          y += `<button type="button" class="button2" id="pal${i}" onclick="setPalette(${json.palettes[i].id});">${json.palettes[i].name}</button>`;
-          y += `<input type="checkbox" name="palc${json.palettes[i].id}" checked><br>`;
+          if (json.palettes[i].name.substring(0,3) != "* C") {
+            y += `<button type="button" class="button2" id="pal${i}" onclick="setPalette(${json.palettes[i].id});">${json.palettes[i].name}</button>`;
+            y += `<input type="checkbox" name="palc${json.palettes[i].id}" ><br>`;
+          }
         }
         e2.innerHTML = y;
 
@@ -532,7 +536,6 @@
     <br></span>
     <hr>
     <button type="button" onclick="B()">Back</button><button type="submit">Save</button>
-
 		<hr>
 		<h2>Effects Selection</h2>
 		<div id="fxlist">
@@ -542,34 +545,9 @@
 		<button type="button" onclick="B()">Back</button><button type="submit">Save</button>
 		<hr>
 		<h2>Palettes Selection</h2> 
-		<!--<div id="selectPalette">
+		<div id="selectPalette">
 				Loading...
-		</div>-->
-		<div class="il">
-			<div id="selectPalette" class="list">
-				<div class="lstI" data-id="0">
-					<label class="check schkl">
-						&nbsp;
-						<input type="radio" value="${palettes[i].id}" name="palette" onChange="setPalette()">
-						<span class="checkmark schk"></span>
-					</label>
-					<div class="lstIcontent">
-						<span class="lstIname">
-							Default
-						</span>
-					</div>
-				</div>
-				<div class="lstI">
-					<div class="lstIcontent">
-						<span class="lstIname">
-							Loading...
-						</span>
-					</div>
-				</div>
-
-			</div>
 		</div>
-		<hr>
 		<button type="button" onclick="B()">Back</button><button type="submit">Save</button>
 	</form>
 </body>

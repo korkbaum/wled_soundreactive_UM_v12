@@ -2,8 +2,8 @@
 var loc = false, locip;
 var noNewSegs = false;
 var isOn = false, nlA = false, isLv = false, isInfo = false, isNodes = false, syncSend = false, syncTglRecv = true, isRgbw = false;
-var PWR = 0;
-var PWRisOn = false;	//PowerLed mod
+var PWR = 1;			// will be set to 0 to hide some UI elements if the powerled usermod json entries are not found in /cfg.json
+var PWRisOn = false;	// PowerLed mod
 var whites = [0,0,0];
 var selColors;
 var expanded = [false];
@@ -11,6 +11,7 @@ var powered = [true];
 var nlDur = 60, nlTar = 0;
 var nlFade = false;
 var selectedFx = 0;
+var selectedPal = 0;
 var Fx_IDs_Names = [];
 var csel = 0;
 var currentPreset = -1;
@@ -251,7 +252,9 @@ async function load_fx_pal_jsons() {
     const data = await response.json();
 
     var strfx = "";	var strpal = "";
-	var i = 1; j = 1;
+	var i = 1; j = 1;		// ignore solid color (fx 0) and default palette in json parsing
+	fxJson[0] = 'true';
+	palJson[0] = 'true';
 	var obj = data;
 
 	for(var k in obj) {
@@ -259,24 +262,28 @@ async function load_fx_pal_jsons() {
 
 			if (k == "um") {		// usermods json values from cfg(.json)
 
+				if (typeof obj["um"]["usermod_powerled"] !== 'undefined' ) PWR = 1;		//double check if values are there at all
+				else PWR = 0;
+
 				if (typeof obj["um"]["usermod_fxpal_selection"] !== 'undefined' ) {		//double check if values are there at all
 					var fxpalobj = obj["um"]["usermod_fxpal_selection"];
 				
 					for (const [key, value] of Object.entries(fxpalobj)) {
-						strfx = key.substr(0,3);
+						strfx = key.substring(0,3);
 						if (strfx == "fxc") {
 							fxJson[i] = `${value}`;
+							//console.log(fxJson[i]);
 							i++;
 						}
-						strpal = key.substr(0,4);
+
+						strpal = key.substring(0,4);
 						if (strpal == "palc") {
 							palJson[j] = `${value}`;
+							//console.log(palJson[j]);
 							j++;
 						}
 					}
 				}
-				if (typeof obj["um"]["usermod_powerled"] !== 'undefined' ) PWR = 1;		//double check if values are there at all
-				else PWR = 0;
 			}
 		};
 	}
@@ -918,7 +925,7 @@ function updatePresets() {
 
 
 function updateUI() {
-
+	//console.log("updateUI: isOn =",isOn);
 	d.getElementById('buttonPower').className = (isOn) ? "active":"";
 	if (PWR == 1) { d.getElementById('PWRbuttonPower').className = (PWRisOn) ? "active":""; }
 	else { d.getElementById('PWRbuttonPower').style = "display:none"; }
@@ -936,9 +943,11 @@ function updateUI() {
 	updateTrail(d.getElementById('sliderFFT3'));
 	updateTrail(d.getElementById('sliderW'));
 	if (isRgbw) d.getElementById('wwrap').style.display = "block";
-	d.getElementById('fxlist').value = selectedFx;
 
-	var spal = d.getElementById("selectPalette");
+	d.getElementById('fxlist').value = selectedFx;
+	d.getElementById("selectPalette").value = selectedPal;
+	//d.getElementById("selectPalette");
+
 	updatePA();
 	updatePresets();
 	updateHex();
@@ -962,6 +971,7 @@ function cmpP(a, b) {
 }
 
 var jsonTimeout;
+
 function requestJson(command, rinfo = true, verbose = true) {
 	//console.log(Date.now(),"requestJson command rinfo", command, rinfo );
 	d.getElementById('connind').style.backgroundColor = "#a90";
@@ -1080,12 +1090,12 @@ function requestJson(command, rinfo = true, verbose = true) {
 				displayRover(info, s);
 			}
 
-			/*if (!handleJson(s)) {
+			if (!handleJson(s)) {
 				showToast('No Segments!', true);
 				updateUI(false);
-				//if (callback) callback();
+				if (callback) callback();
 				return;
-			}*/
+			}
 	
 			if (s.error && s.error != 0) {
 			  var errstr = "";
@@ -1189,6 +1199,7 @@ function handleJson(s) {					//only called if websocket event was triggered by b
 	}
 	
 	d.getElementById("selectPalette").value = i.pal;
+	selectedPal = i.pal;
 
 	displayRover(lastinfo, s);
 	updateUI();
@@ -1416,20 +1427,22 @@ function setSegBri(s){
 
 function setX(ind) {
 	var obj = {"seg": {"fx": parseInt(ind)}};
-	requestJson(obj);
 	currentPreset = -1;		//un-highlight preset button
+	requestJson(obj);
 	updatePresets();
 }
 
 function setEffect() {
 	var obj = {"seg": {"fx": parseInt(d.getElementById('fxlist').value)}};
-	requestJson(obj);
 	currentPreset = -1;		//un-highlight preset button
+	selectedFx = obj;
+	requestJson(obj);
 	updatePresets();
 }
 
 function setPalette() {
 	var obj = {"seg": {"pal": parseInt(d.getElementById('selectPalette').value)}};
+	selectedPal = obj;
 	requestJson(obj);
 }
 
@@ -1797,7 +1810,7 @@ function expand(i,a) {
 
 function unfocusSliders() {
 	d.getElementById("sliderBri").blur();
-	d.getElementById("sliderPWRBri").blur();	//Power LED mod
+	if (PWR == 1) {d.getElementById("sliderPWRBri").blur();}	//Power LED mod
 	d.getElementById("sliderSpeed").blur();
 	d.getElementById("sliderIntensity").blur();
 	d.getElementById("sliderFFT1").blur();
