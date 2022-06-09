@@ -13,10 +13,11 @@ Long touch toggles power on/off.
 class usermod_touchrandom : public Usermod {
 	
   private:
-    int fx_active[MODE_COUNT];
+  /*relocated to usermod_fxpal_selection*/
+   /* int fx_active[MODE_COUNT];
     int fx_active_count = 0;
     int pal_active[GRADIENT_PALETTE_COUNT];
-    int pal_active_count = 0;
+    int pal_active_count = 0;*/
 
     int my_touchpin;                    //variables read from /cfg
     int my_threshold;                   //KK: MagicReel: 12,  CubeBall: 9, def 60, MicroCube: 3
@@ -37,6 +38,7 @@ class usermod_touchrandom : public Usermod {
       lastTime = millis();
 
       //identify activated effects, assign to array to get valid values for random selection in loop
+      /*relocated to usermod_fxpal_sele3ction.h
       for (int i = 1; i < MODE_COUNT; i++) {
         if (fxsel_active[i]) {
           fx_active[fx_active_count] = i;
@@ -50,7 +52,7 @@ class usermod_touchrandom : public Usermod {
           pal_active[pal_active_count] = i;
           pal_active_count++;
         }
-      }
+      }*/
 
     }
 

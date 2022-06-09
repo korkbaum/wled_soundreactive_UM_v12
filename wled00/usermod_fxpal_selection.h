@@ -1,3 +1,8 @@
+// prepare a bunch of json keys + values to mark effectcs and palettes as active or not (true/false).
+// activation/deactivation is done with checkboxes in settings_LEDS.htm
+// selected config is stored in littleFS /cfg file. 
+// korkbaum Updated June 2022
+
 #pragma once
 
 #include "wled.h"
@@ -5,10 +10,29 @@
 class usermod_fxpal_selection : public Usermod {
 	
   private:
+    int fx_active[MODE_COUNT];
+    int fx_active_count = 0;
+    int pal_active[GRADIENT_PALETTE_COUNT];
+    int pal_active_count = 0;
 	
   public:
    
     void setup() {
+      //identify activated effects, assign to array
+      for (int i = 1; i < MODE_COUNT; i++) {
+        if (fxsel_active[i]) {
+          fx_active[fx_active_count] = i;
+          fx_active_count++;
+        }
+      }
+      
+      //identify activated palettes, assign to array 
+      for (int i = 1; i < GRADIENT_PALETTE_COUNT; i++) {
+        if (palsel_active[i]) {
+          pal_active[pal_active_count] = i;
+          pal_active_count++;
+        }
+      }
     }
 
     void connected() {
@@ -21,40 +45,18 @@ class usermod_fxpal_selection : public Usermod {
   		JsonObject top = root.createNestedObject("usermod_fxpal_selection");
        
       char indx[12];
-      //int fx_check = 0;
-      //int pal_check = 0;
 
       for (int i = 1; i < MODE_COUNT; i++) {                        //prepare fx selection keys
         indx[0] = '\0';
         sprintf(indx, "%s%d", "fxc", i);
         top[indx] = fxsel_active[i];
-        //if (fxsel_active[i]) fx_check++;
-        //Serial.printf("%s%i%s%i", "\ni: ", i, " fxsel_active[i]: ",fxsel_active[i]);
       }
 
-      /*if (fx_check == 0) {                                            // no effect selected at all (likely first run) --> activate all effects
-        for (int i = 1; i < MODE_COUNT; i++) {
-          indx[0] = '\0';
-          sprintf(indx, "%s%d", "fxc", i);
-          top[indx] = true;
-        }
-      }*/
-      
       for (int i = 1; i < GRADIENT_PALETTE_COUNT; i++) {            //prepare pal selection keys
         indx[0] = '\0';  
         sprintf(indx, "%s%d", "palc", i);
         top[indx] = palsel_active[i];
-        //if (palsel_active[i]) pal_check++;
       }
-      
-      /*
-      if (pal_check == 0) {                                         // no palette selected at all (likely first run) --> activate all palettes
-        for (int i = 1; i < GRADIENT_PALETTE_COUNT; i++) {
-          indx[0] = '\0';
-          sprintf(indx, "%s%d", "palc", i);
-          top[indx] = true;
-        }
-      }*/
     }
 
     void readFromConfig(JsonObject& root){                        

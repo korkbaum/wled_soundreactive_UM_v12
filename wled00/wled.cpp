@@ -668,8 +668,10 @@ void WLED::handleConnection()
       initAP();
   } else if (!interfacesInited) {        // newly connected
     DEBUG_PRINTLN("");
-    DEBUG_PRINT(F("Connected! IP address: "));
-    DEBUG_PRINTLN(Network.localIP());
+    //DEBUG_PRINT(F("Connected! IP address: "));
+    //DEBUG_PRINTLN(Network.localIP());
+    Serial.print("\nConnected! IP address: ");
+    Serial.println(Network.localIP());
     initInterfaces();
     userConnected();
     usermods.connected();

@@ -11,7 +11,7 @@ var powered = [true];
 var nlDur = 60, nlTar = 0;
 var nlFade = false;
 var selectedFx = 0;
-var selectedPal = 0;
+var selectedPal = 0;		// to update palette name in dropdown when effect is re-selcted or preset is shown
 var Fx_IDs_Names = [];
 var csel = 0;
 var currentPreset = -1;
@@ -945,7 +945,7 @@ function updateUI() {
 	if (isRgbw) d.getElementById('wwrap').style.display = "block";
 
 	d.getElementById('fxlist').value = selectedFx;
-	d.getElementById("selectPalette").value = selectedPal;
+	d.getElementById('selectPalette').value = selectedPal;
 	//d.getElementById("selectPalette");
 
 	updatePA();
@@ -1668,6 +1668,7 @@ function setColor(sr) {
 	updateHex();
 	updateRgb();
 	obj.transition = parseInt(d.getElementById('cyctt').value*10);
+	//currentPreset = -1;		//un-highlight preset button
 	requestJson(obj);
 }
 

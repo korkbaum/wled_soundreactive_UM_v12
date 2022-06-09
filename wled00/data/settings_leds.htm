@@ -136,10 +136,17 @@
         for (let i = 0; i < json.effects.length; i++) json.effects[i] = {id: parseInt(i)+1, name:json.effects[i]};
         json.effects.sort(compare);
         for (let i = 0; i < json.effects.length; i++) {
+          // To DO: hide 2d effects completely as those don't work
+          // Hiding them here is causing an issue with settings_leds and undefined values
+          // Workaround is to show them but not allowing to change them to selected
           if ((json.effects[i].name.substring(0,2) != "2D") && (json.effects[i].name.substring(0,5) != "** 2D")) {
             x += `<button type="button" class="button2" id="fxb${i}" onclick="setX(${json.effects[i].id});">${json.effects[i].name}</button>`;			 
             x += `<input type="checkbox" name="fxc${json.effects[i].id}" ><br>`;
+          } else {
+            x += `<button type="button" class="button2" id="fxb${i}" onclick="setX(${json.effects[i].id});" style="color: Gray;" disabled>${json.effects[i].name}</button>`;			 
+            x += `<input type="checkbox" name="fxc${json.effects[i].id}" onchange='this.checked = false;'><br>`;
           }
+
         }
         e1.innerHTML = x; 
         
@@ -150,6 +157,9 @@
           if (json.palettes[i].name.substring(0,3) != "* C") {
             y += `<button type="button" class="button2" id="pal${i}" onclick="setPalette(${json.palettes[i].id});">${json.palettes[i].name}</button>`;
             y += `<input type="checkbox" name="palc${json.palettes[i].id}" ><br>`;
+          } else {
+            y += `<button type="button" class="button2" id="pal${i}" onclick="setPalette(${json.palettes[i].id});" style="color: Gray;" disabled>${json.palettes[i].name}</button>`;
+            y += `<input type="checkbox" name="palc${json.palettes[i].id}" onchange='this.checked = false;'><br>`;
           }
         }
         e2.innerHTML = y;
@@ -453,7 +463,7 @@
     </div>
     Serpentine: <input type="checkbox" name="MXWHS" checked> (how leds are laid out)<br>
     <br>
-    Enable automatic brightness limiter: <input type="checkbox" name="ABen" onchange="enABL()" id="able"><br>
+    <br>Enable automatic brightness limiter: <input type="checkbox" name="ABen" onchange="enABL()" id="able"><br>
     <div id="abl">
       Maximum Current: <input name="MA" type="number" min="250" max="65000" oninput="UI()" required> mA<br>
       <div id="ampwarning" style="color: orange; display: none;">
