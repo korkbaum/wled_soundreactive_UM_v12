@@ -83,16 +83,16 @@ void registerUsermods()
    */
   //usermods.add(new MyExampleUsermod());
   
-  #ifdef USERMOD_ID_FXPAL_SELECTION
-  usermods.add(new usermod_fxpal_selection());
-  #endif
-
   #ifdef USERMOD_ID_POWERLED
   usermods.add(new usermod_powerled());
   #endif
 
   #ifdef USERMOD_ID_TOUCHRANDOM
   usermods.add(new usermod_touchrandom());
+  #endif
+
+  #ifdef USERMOD_ID_FXPAL_SELECTION
+  usermods.add(new usermod_fxpal_selection());
   #endif
 
   #ifdef USERMOD_DALLASTEMPERATURE

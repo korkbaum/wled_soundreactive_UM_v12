@@ -14,9 +14,8 @@ class usermod_fxpal_selection : public Usermod {
     int fx_active_count = 0;
     int pal_active[GRADIENT_PALETTE_COUNT];
     int pal_active_count = 0;
-	
+    
   public:
-   
     void setup() {
       //identify activated effects, assign to array
       for (int i = 1; i < MODE_COUNT; i++) {

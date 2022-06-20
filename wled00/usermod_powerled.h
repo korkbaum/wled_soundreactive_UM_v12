@@ -10,11 +10,8 @@ On Long touch event the PowerLed toggles power on/off.
 
 #ifdef ESP32		//won't run on ESP8266
 
-//PWR_LED_PIN default = 17    Hardware pin to attach mosfet gate for power led control, assign in settings_leds.htm
 #define TOUCHCONTROL_ENABLED 1    // turn touch control on or off (unelegantly)
-//#define threshold 50              // KK: MagicReel: 12,  CubeBall: 9, def 60 
-//#define TOUCH_PIN T3              // T3 = GPIO 15
-#define TOUCH_DEBUG 0
+#define TOUCH_DEBUG 0             // enable serial output to check touch threshold value
 
 //this is to run analogwrite style pwm dimming on esp32
 #define LEDC_CHANNEL_0     0
@@ -30,7 +27,7 @@ void ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax = 255) {
 class usermod_powerled : public Usermod {
 	
   private:
-	unsigned long lastTime = 0;           //Interval
+	  unsigned long lastTime = 0;           //Interval
     unsigned long lastTouch = 0;        //Timestamp of last Touch
     unsigned long lastRelease = 0;      //Timestamp of last Touch release
     boolean released = true;            //current Touch state (touched/released)
@@ -122,7 +119,7 @@ class usermod_powerled : public Usermod {
         ledcAnalogWrite(LEDC_CHANNEL_0, 0);
       }
       PWRonLast = PWRon;
-      //colorUpdated(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
+      colorUpdated(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
       updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
   	}
 
@@ -146,7 +143,7 @@ class usermod_powerled : public Usermod {
       userVar1 = PWRon;
 
       if (TOUCHCONTROL_ENABLED) {
-        JsonObject top = root.createNestedObject("touch");
+        JsonObject top = root.createNestedObject("pwrtouch");
         top["tpin"] = my_touchpin;
         top["thre"] = my_threshold;
       }
@@ -156,10 +153,11 @@ class usermod_powerled : public Usermod {
   		JsonObject top = root["usermod_powerled"];
       PWRbri = top["PWRbri"] | userVar0;
   		PWRon  = top["PWRon"] | userVar1;
+
       if (TOUCHCONTROL_ENABLED) {
-        JsonObject top = root["touch"];
+        JsonObject top = root["pwrtouch"];
         my_touchpin = top["tpin"] | 15;   // Touchpin T3 = GPIO 15 / default
-        my_threshold = top["thre"] | 10;  // threshold 10 / default
+        my_threshold = top["thre"] | 20;  // threshold
       }
     }
     
