@@ -7,12 +7,14 @@
 
 #include "wled.h"
 
+#define PAL_COUNT GRADIENT_PALETTE_COUNT + 13     // ugly, should be strip.getPaletteCount() from FX_fcn.cpp
+
 class usermod_fxpal_selection : public Usermod {
 	
   private:
     int fx_active[MODE_COUNT];
     int fx_active_count = 0;
-    int pal_active[GRADIENT_PALETTE_COUNT];
+    int pal_active[PAL_COUNT];
     int pal_active_count = 0;
     
   public:
@@ -26,7 +28,7 @@ class usermod_fxpal_selection : public Usermod {
       }
       
       //identify activated palettes, assign to array 
-      for (int i = 1; i < GRADIENT_PALETTE_COUNT; i++) {
+      for (int i = 1; i < PAL_COUNT; i++) {
         if (palsel_active[i]) {
           pal_active[pal_active_count] = i;
           pal_active_count++;
@@ -51,7 +53,7 @@ class usermod_fxpal_selection : public Usermod {
         top[indx] = fxsel_active[i];
       }
 
-      for (int i = 1; i < GRADIENT_PALETTE_COUNT; i++) {            //prepare pal selection keys
+      for (int i = 1; i < PAL_COUNT; i++) {            //prepare pal selection keys
         indx[0] = '\0';  
         sprintf(indx, "%s%d", "palc", i);
         top[indx] = palsel_active[i];
@@ -68,7 +70,7 @@ class usermod_fxpal_selection : public Usermod {
         fxsel_active[i] = top[indx] | true;
       }
 
-      for (int i = 1; i < GRADIENT_PALETTE_COUNT; i++) {            //read current pal selection values
+      for (int i = 1; i < PAL_COUNT; i++) {            //read current pal selection values
         indx[0] = '\0';  
         sprintf(indx, "%s%d", "palc", i);
         palsel_active[i] = top[indx] | true;

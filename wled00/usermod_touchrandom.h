@@ -9,6 +9,7 @@ Long touch toggles power on/off.
 #include "wled.h"
 
 #define TOUCHRANDOM_DEBUG 0             // enable serial output to check touch threshold value
+#define PAL_COUNT GRADIENT_PALETTE_COUNT + 13     // ugly, should be strip.getPaletteCount() from FX_fcn.cpp
 
 class usermod_touchrandom : public Usermod {
 	
@@ -16,7 +17,7 @@ class usermod_touchrandom : public Usermod {
       /* TO DO: relocate to usermod_fxpal_selection*/
     int fx_active[MODE_COUNT];
     int fx_active_count = 0;
-    int pal_active[GRADIENT_PALETTE_COUNT];
+    int pal_active[PAL_COUNT];
     int pal_active_count = 0;
 
     int my_touchpin;                    //variables read from /cfg
@@ -47,7 +48,7 @@ class usermod_touchrandom : public Usermod {
       }
       
       //identify activated palettes, assign to array to get valid values for random selection in loop
-      for (int i = 1; i < GRADIENT_PALETTE_COUNT; i++) {
+      for (int i = 1; i < PAL_COUNT; i++) {
         if (palsel_active[i]) {
           pal_active[pal_active_count] = i;
           pal_active_count++;
@@ -76,7 +77,7 @@ class usermod_touchrandom : public Usermod {
             touchDuration = lastRelease - lastTouch;              //Calculate duration
           }
   
-          if ( !(USERMOD_ID_POWERLED) && (touchDuration >= 1000 && released) ) {    //800ms Toggle power if button press is longer than 800ms
+          if ( !(USERMOD_ID_POWERLED) && (touchDuration >= 500 && released) ) {    //500ms Toggle power if button press is longer than 800ms
                                                                                   // USERMOD_ID_POWERLED also triggers power on/off, if both are used, don't introduce overlapping touch fuctions
             touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
             toggleOnOff();
@@ -84,7 +85,7 @@ class usermod_touchrandom : public Usermod {
             updateInterfaces(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
             if (TOUCHRANDOM_DEBUG) Serial.println("toggle on/off");
           } 
-          else if (touchDuration >= 100 && released) {             //200ms trigger random effect & palette
+          else if (touchDuration >= 150 && released) {             //150ms trigger random effect & palette
             touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
             
             int eff_index = random(1, fx_active_count);            //random effect, leave solid out

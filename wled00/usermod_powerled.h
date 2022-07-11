@@ -85,7 +85,7 @@ class usermod_powerled : public Usermod {
               PWRtoggleOnOff();
               if (TOUCH_DEBUG) Serial.println("PWRtoggle");
             } 
-            else if (touchDuration >= 100 && released) {             //100 Switch to next brightness if touch is between 100 and 800ms
+            else if (touchDuration >= 150 && released) {             //100 Switch to next brightness if touch is between 100 and 800ms
               touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
               toggleOnOff();
               colorUpdated(NOTIFIER_CALL_MODE_DIRECT_CHANGE);

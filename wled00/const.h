@@ -47,7 +47,7 @@
 #define USERMOD_ID_VL53L0X       12            //Usermod "usermod_vl53l0x_gestures.h"
 #define USERMOD_ID_POWERLED      13            //Usermod "usermod_powerled.h"
 #define USERMOD_ID_FXPAL_SELECTION 14          //Usermod "usermod_fxpal_selection.h"
-#define USERMOD_ID_TOUCHRANDOM   15            //Usermod "usermod_touchrandom.h"
+//#define USERMOD_ID_TOUCHRANDOM   15            //Usermod "usermod_touchrandom.h"
 //#define USERMOD_ID_MULTI_RELAY  101            //Usermod "usermod_multi_relay.h"
 
 //Access point behavior
