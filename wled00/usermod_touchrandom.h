@@ -9,7 +9,6 @@ Long touch toggles power on/off.
 #include "wled.h"
 
 #define TOUCHRANDOM_DEBUG 0             // enable serial output to check touch threshold value
-#define PAL_COUNT GRADIENT_PALETTE_COUNT + 13     // ugly, should be strip.getPaletteCount() from FX_fcn.cpp
 
 class usermod_touchrandom : public Usermod {
 	

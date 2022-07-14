@@ -294,8 +294,9 @@ WLED_GLOBAL bool skipFirstLed  _INIT(false);        // ignore first LED in strip
 WLED_GLOBAL byte briMultiplier _INIT(100);          // % of brightness to set (to limit power, if you set it to 50 and set bri to 255, actual brightness will be 127)
 
 #ifdef USERMOD_ID_FXPAL_SELECTION
+#define PAL_COUNT (GRADIENT_PALETTE_COUNT + 13)     // ugly, should be strip.getPaletteCount() from FX_fcn.cpp
 WLED_GLOBAL bool fxsel_active[MODE_COUNT] _INIT_N(({true}));      // selected effects active flag, number must be >= fxcount 170
-WLED_GLOBAL bool palsel_active[GRADIENT_PALETTE_COUNT] _INIT_N(({true}));      // selected palettes active flag, number must be >= palette count
+WLED_GLOBAL bool palsel_active[(PAL_COUNT)] _INIT_N(({true}));      // selected palettes active flag, number must be >= palette count (=GRADIENT_PALETTE_COUNT + 13 as in FX_fcn.cpp)
 #endif
 
 // User Interface CONFIG

@@ -202,7 +202,7 @@ void handleSettingsSet(AsyncWebServerRequest *request, byte subPage)
     }
 
     //palette selection checkboxes
-    for (int i = 1; i < GRADIENT_PALETTE_COUNT; i++) {
+    for (int i = 1; i < PAL_COUNT; i++) {
       chkboxc[0] = '\0';
       sprintf(chkboxc, "%s%d", "palc", i);
       palsel_active[i] = request->hasArg(F(chkboxc));

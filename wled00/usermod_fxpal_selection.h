@@ -7,7 +7,7 @@
 
 #include "wled.h"
 
-#define PAL_COUNT GRADIENT_PALETTE_COUNT + 13     // ugly, should be strip.getPaletteCount() from FX_fcn.cpp
+//#define PAL_COUNT (GRADIENT_PALETTE_COUNT + 13)   // moved to wled.h
 
 class usermod_fxpal_selection : public Usermod {
 	
@@ -18,6 +18,7 @@ class usermod_fxpal_selection : public Usermod {
     int pal_active_count = 0;
     
   public:
+
     void setup() {
       //identify activated effects, assign to array
       for (int i = 1; i < MODE_COUNT; i++) {

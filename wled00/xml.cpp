@@ -372,7 +372,7 @@ void getSettingsJS(byte subPage, char* dest)
     }
 
     //palette selection
-    for (int i = 1; i < GRADIENT_PALETTE_COUNT; i++) {
+    for (int i = 1; i < PAL_COUNT; i++) {
       chkboxc[0] = '\0';
       sprintf(chkboxc, "%s%d", "palc", i);
       sappend('c',SET_F(chkboxc), palsel_active[i]);
