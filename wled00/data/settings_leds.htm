@@ -7,6 +7,12 @@
 	<script>
   var loc = false, locip;
 	var selectedFx = 0;
+  var fx_count = 0;
+  var fx_names = [];
+  var fx_ids = [];
+  var pal_count = 0;
+  var pal_names = [];
+  var pal_ids = [];
 	var csel = 0;
 	var pN = "", pI = 0;
 	var pmt = 1, pmtLS = 0, pmtLast = 0;
@@ -135,31 +141,38 @@
         json.effects.shift(); //remove solid
         for (let i = 0; i < json.effects.length; i++) json.effects[i] = {id: parseInt(i)+1, name:json.effects[i]};
         json.effects.sort(compare);
+        fx_count = json.effects.length; //for activation+deactivation buttons
+
         for (let i = 0; i < json.effects.length; i++) {
+          fx_names[i] = json.effects[i].name;
+          fx_ids[i] = json.effects[i].id;
           // To DO: hide 2d effects completely as those don't work
           // Hiding them here is causing an issue with settings_leds and undefined values
           // Workaround is to show them but not allowing to change them to selected
           if ((json.effects[i].name.substring(0,2) != "2D") && (json.effects[i].name.substring(0,5) != "** 2D")) {
             x += `<button type="button" class="button2" id="fxb${i}" onclick="setX(${json.effects[i].id});">${json.effects[i].name}</button>`;			 
-            x += `<input type="checkbox" name="fxc${json.effects[i].id}" ><br>`;
+            x += `<input type="checkbox" name="fxc${json.effects[i].id}" id="fxc${json.effects[i].id}" ><br>`;
           } else {
             x += `<button type="button" class="button2" id="fxb${i}" onclick="setX(${json.effects[i].id});" style="color: Gray;" disabled>${json.effects[i].name}</button>`;			 
-            x += `<input type="checkbox" name="fxc${json.effects[i].id}" onchange='this.checked = false;'><br>`;
+            x += `<input type="checkbox" name="fxc${json.effects[i].id}" id="fxc${json.effects[i].id}" onchange='this.checked = false;'><br>`;
           }
-
         }
         e1.innerHTML = x; 
         
         json.palettes.shift(); //remove default
         for (let i = 0; i < json.palettes.length; i++) json.palettes[i] = {"id": parseInt(i)+1, "name":json.palettes[i]};
         json.palettes.sort(compare);
+        pal_count = json.palettes.length; //for activation+deactivation buttons
+
         for (let i = 0; i < json.palettes.length; i++) {
+          pal_names[i] = json.palettes[i].name;
+          pal_ids[i] = json.palettes[i].id;
           if (json.palettes[i].name.substring(0,3) != "* C") {
             y += `<button type="button" class="button2" id="pal${i}" onclick="setPalette(${json.palettes[i].id});">${json.palettes[i].name}</button>`;
-            y += `<input type="checkbox" name="palc${json.palettes[i].id}" ><br>`;
+            y += `<input type="checkbox" name="palc${json.palettes[i].id}" id="palc${json.palettes[i].id}" ><br>`;
           } else {
             y += `<button type="button" class="button2" id="pal${i}" onclick="setPalette(${json.palettes[i].id});" style="color: Gray;" disabled>${json.palettes[i].name}</button>`;
-            y += `<input type="checkbox" name="palc${json.palettes[i].id}" onchange='this.checked = false;'><br>`;
+            y += `<input type="checkbox" name="palc${json.palettes[i].id}" id="palc${json.palettes[i].id}" onchange='this.checked = false;'><br>`;
           }
         }
         e2.innerHTML = y;
@@ -435,6 +448,43 @@
 
       UI();
     }
+
+    function checkall_fx(){   //select all effects...
+      for (j = 0; j < fx_count; j++) {
+        if ((fx_names[j].substring(0,2) != "2D") && (fx_names[j].substring(0,5) != "** 2D")) {  // ...except unwanted ones
+          var tmp = fx_ids[j];
+          var id = "fxc" + tmp;
+          document.getElementById(id).checked = true;
+        }
+      }
+    }
+
+    function uncheckall_fx(){   //de-select all effects
+      for (j = 0; j < fx_count; j++) {
+        var tmp = fx_ids[j];
+        var id = "fxc" + tmp;
+        document.getElementById(id).checked = false;
+      }
+    }
+    
+    function checkall_pal(){   //select all palettes...
+      for (j = 0; j < pal_count; j++) {
+        if (pal_names[j].substring(0,3) != "* C") {  // ...except unwanted ones
+          var tmp = pal_ids[j];
+          var id = "palc" + tmp;
+          document.getElementById(id).checked = true;
+        }
+      }
+    }
+
+    function uncheckall_pal(){   //de-select all palettes
+      for (j = 0; j < pal_count; j++) {
+        var tmp = pal_ids[j];
+        var id = "palc" + tmp;
+        document.getElementById(id).checked = false;
+      }
+    }
+    
 		function GetV()
 		{
       //values injected by server while sending HTML
@@ -548,13 +598,15 @@
     <button type="button" onclick="B()">Back</button><button type="submit">Save</button>
 		<hr>
 		<h2>Effects Selection</h2>
+    <button type="button" onclick="checkall_fx()">Activate all Effects</button><button type="button" onclick="uncheckall_fx()">De-Activate All</button>
 		<div id="fxlist">
 				Loading...
 		</div>
 		<hr>
 		<button type="button" onclick="B()">Back</button><button type="submit">Save</button>
 		<hr>
-		<h2>Palettes Selection</h2> 
+		<h2>Palettes Selection</h2>
+    <button type="button" onclick="checkall_pal()">Activate all Palettes</button><button type="button" onclick="uncheckall_pal()">De-Activate All</button>
 		<div id="selectPalette">
 				Loading...
 		</div>
