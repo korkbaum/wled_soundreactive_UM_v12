@@ -10,6 +10,13 @@ Long touch toggles power on/off.
 
 #define TOUCHRANDOM_DEBUG 0             // enable serial output to check touch threshold value
 
+#ifndef USERMOD_ID_POWERLED
+  #define POWERLED 0
+#else
+  #define POWERLED 1
+#endif
+
+
 class usermod_touchrandom : public Usermod {
 	
   private:
@@ -76,7 +83,7 @@ class usermod_touchrandom : public Usermod {
             touchDuration = lastRelease - lastTouch;              //Calculate duration
           }
   
-          if ( !(USERMOD_ID_POWERLED) && (touchDuration >= 500 && released) ) {    //500ms Toggle power if button press is longer than 800ms
+          if ( !(POWERLED) && (touchDuration >= 500 && released) ) {    //500ms Toggle power if button press is longer than 800ms
                                                                                   // USERMOD_ID_POWERLED also triggers power on/off, if both are used, don't introduce overlapping touch fuctions
             touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
             toggleOnOff();
