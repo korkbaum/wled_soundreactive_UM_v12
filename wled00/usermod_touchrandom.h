@@ -50,6 +50,7 @@ class usermod_touchrandom : public Usermod {
         if (fxsel_active[i]) {
           fx_active[fx_active_count] = i;
           fx_active_count++;
+          if (TOUCHRANDOM_DEBUG) Serial.printf("%s %d %d\n", "FX: ", fx_active_count, fx_active[fx_active_count]);
         }
       }
       
@@ -58,6 +59,7 @@ class usermod_touchrandom : public Usermod {
         if (palsel_active[i]) {
           pal_active[pal_active_count] = i;
           pal_active_count++;
+          if (TOUCHRANDOM_DEBUG) Serial.printf("%s %d %d\n","PAL: ", pal_active_count, pal_active[pal_active_count]);
         }
       }
 
@@ -94,10 +96,10 @@ class usermod_touchrandom : public Usermod {
           else if (touchDuration >= 150 && released) {             //150ms trigger random effect & palette
             touchDuration = 0;                                     //Reset touch duration to avoid multiple actions on same touch
             
-            int eff_index = random(1, fx_active_count);            //random effect, leave solid out
+            int eff_index = random(0, fx_active_count);            //random effect from active fx array
             effectCurrent = fx_active[eff_index];
             
-            int pal_index = random(0, pal_active_count);           //random palette
+            int pal_index = random(0, pal_active_count);           //random palette from active pal array
             effectPalette = pal_active[pal_index];
             
             colorUpdated(NOTIFIER_CALL_MODE_DIRECT_CHANGE);
